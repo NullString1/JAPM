@@ -34,7 +34,7 @@
         </div>
         <div id="add-cred-container" class="container border mt-5 ms-3 p-2 w-25 d-flex flex-column justify-content-center d-none">
             <h3 class="text-center">Add Password</h3>
-            <form class="d-flex flex-column">
+            <div class="d-flex flex-column">
                 <div class="mb-3">
                     <label for="name" class="form-label">Name</label>
                     <input type="text" class="form-control" id="name" name="name">
@@ -51,13 +51,13 @@
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control" id="password" name="password">
                 </div>
-                <button type="submit" class="btn btn-primary align-self-center">Add</button>
-            </form>
+                <button id="add-cred-submit" type="submit" class="btn btn-primary align-self-center">Add</button>
+            </div>
         </div>
         <div id="list-cred-container" class="container border mt-5 ms-3 me-3 w-100 p-2 d-flex justify-content-center flex-column d-none">
             <div>
                 <h3 class="text-center">View Passwords</h3>
-                <table class="table table-responsive">
+                <table id="creds-table" class="table table-responsive">
                     <thead>
                         <tr>
                             <th>Name</th>

@@ -38,7 +38,7 @@ class User {
         });
     }
 
-    getCredenitals() {
+    getCredentials() {
         return this.#credentials;
     }
 
@@ -134,9 +134,11 @@ class Crypt {
 }
 
 class JAPM {
+    /** @type {User} */
     #user;
     #fileHandler;
     #crypt;
+    /** @type {JAPM.State} */
     #state;
 
     static State = {
@@ -164,9 +166,9 @@ class JAPM {
                 this.setupMainView();
                 break;
         }
-    
+
     };
-    
+
     login(username, password) {
         if (this.#user != undefined && this.#user.getUsername() === username) {
             this.#user.checkPassword(password).then(res => {
@@ -179,24 +181,69 @@ class JAPM {
         }
     }
 
-    setupLogin(){
-        $("#login-container").removeClass("d-none");
-        $("#login-submit").click(() => {
-            console.log("Login clicked");
-            this.login($("#login-username").val(), $("#login-password").val());
+    setupLogin() {
+        $(document).ready(() => {
+            $("#login-container").removeClass("d-none");
+            $("#login-submit").click(() => {
+                console.log("Login clicked");
+                this.login($("#login-username").val(), $("#login-password").val());
+            });
         });
     }
 
     setupMainView() {
-        $("#login-container").addClass("d-none");
-        $("#add-cred-container").removeClass("d-none");
-        $("#list-cred-container").removeClass("d-none");
+        $(document).ready(() => {
+            $("#login-container").addClass("d-none");
+            $("#add-cred-container").removeClass("d-none");
+            $("#list-cred-container").removeClass("d-none");
+            this.buildCredsTable();
+            $("#add-cred-submit").click(() => {
+                const name = $("#name").val();
+                const site = $("#site").val();
+                const username = $("#username").val();
+                const password = $("#password").val();
+                if (name === "" || site === "" || username === "" || password === "") {
+                    return;
+                }
+                this.addCred(
+                    $("#name").val(),
+                    $("#site").val(),
+                    $("#username").val(),
+                    $("#password").val()
+                );
+            });
+        });
+    }
+
+    buildCredsTable() {
+        if (this.#user == undefined) {
+            this.updateState(JAPM.State.UNAUTHENTICATED);
+            return;
+        }
+        const tableBody = $("#creds-table tbody");
+        tableBody.empty();
+        this.#user.getCredentials().forEach((/** @type {Credential} */cred) => {
+            tableBody.append(
+                `<tr>
+                <td>${cred.getName()}</td>
+                <td>${cred.getURL()}</td>
+                <td>${cred.getUsername()}</td>
+                <td>${cred.getPassword()}</td>
+                <td>${cred.getCreatedAt().toGMTString()}</td>
+                <td>${cred.getLastModAt().toGMTString()}</td>
+            </tr>`
+            );
+        });
+    }
+
+    addCred(name, url, username, password) {
+        this.#user.addCredential(new Credential(username, password, url, name));
+        this.buildCredsTable();
     }
 
 }
 
-$(document).ready(function() {
-    const user = new User("u", "p");
-    const japm = new JAPM();
-    japm.setUser(user);
-});
+document.user = new User("u", "p");
+document.japm = new JAPM();
+document.japm.setUser(document.user);
+document.user.addCredential(new Credential("user1", "pass1", "example.com", "example"));
