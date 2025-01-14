@@ -176,8 +176,12 @@ class JAPM {
                     this.updateState(JAPM.State.AUTHENTICATED);
                 } else {
                     console.log("Invalid password");
+                    $("#login-error").removeClass("d-none");
                 }
             });
+        } else {
+            console.log("Invalid username");
+            $("#login-error").removeClass("d-none");
         }
     }
 
@@ -194,8 +198,7 @@ class JAPM {
     setupMainView() {
         $(document).ready(() => {
             $("#login-container").addClass("d-none");
-            $("#add-cred-container").removeClass("d-none");
-            $("#list-cred-container").removeClass("d-none");
+            $("#main-container").removeClass("d-none");
             this.buildCredsTable();
             $("#add-cred-submit").click(() => {
                 const name = $("#name").val();
@@ -206,10 +209,10 @@ class JAPM {
                     return;
                 }
                 this.addCred(
-                    $("#name").val(),
-                    $("#site").val(),
-                    $("#username").val(),
-                    $("#password").val()
+                    name,
+                    site,
+                    username,
+                    password
                 );
             });
         });
