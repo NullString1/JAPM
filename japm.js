@@ -306,6 +306,9 @@ class JAPM {
             $("#load-button").click(() => {
                 $("#load-input").click();
             });
+            $("#load-input").change(() => {
+                $("#login-submit").text("Login");
+            });
         });
     }
 
@@ -370,7 +373,4 @@ class JAPM {
 
 }
 
-//document.user = new User("u", "p");
 document.japm = new JAPM();
-//document.japm.setUser(document.user);
-//document.user.addCredential(new Credential("user1", "pass1", "example.com", "example"));
