@@ -204,7 +204,7 @@ class JAPM {
 
     constructor() {
         this.#fileHandler = new FileHandler();
-        this.updateState(JAPM.State.AUTHENTICATED);
+        this.updateState(JAPM.State.UNAUTHENTICATED);
     }
 
     setUser(user) {
