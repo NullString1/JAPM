@@ -53,6 +53,15 @@ class User {
     getCreatedAt() {
         return this.#created_at;
     }
+
+    toJSON() {
+        return JSON.stringify({
+            username: this.#username,
+            password_hash: new Uint8Array(this.#password_hash).map(b => b.toString(16)).join(""),
+            created_at: this.#created_at,
+            credentials: this.#credentials.map(cred => cred.toJSON())
+        });
+    }
 }
 
 class Credential {
@@ -115,6 +124,17 @@ class Credential {
         this.#name = name;
         this.#last_modified_at = new Date();
     }
+
+    toJSON() {
+        return JSON.stringify({
+            username: this.#username,
+            password: this.#password,
+            created_at: this.#created_at,
+            last_modified_at: this.#last_modified_at,
+            url: this.#url,
+            name: this.#name
+        });
+    }
 }
 
 class FileHandler {
@@ -126,10 +146,47 @@ class FileHandler {
 }
 
 class Crypt {
-    encrypt(data) {
+    static keyFromPassword(password, salt_=null) {
+        // Hash the password, then import it, then derive a key from it with PBKDF2 for AES-CBC
+        return crypto.subtle.digest("SHA-256", new TextEncoder().encode(password)).then(hash => {
+            return crypto.subtle.importKey("raw", hash, { name: "PBKDF2" }, false, ["deriveKey"]).then(key => {
+                const salt = salt_==null ? crypto.getRandomValues(new Uint8Array(16)) : salt_;
+                return crypto.subtle.deriveKey(
+                    {
+                        name: "PBKDF2",
+                        salt: salt,
+                        iterations: 100000,
+                        hash: "SHA-256"
+                    },
+                    key,
+                    { name: "AES-CBC", length: 256 },
+                    false,
+                    ["encrypt", "decrypt"]
+                ).then(derivedKey => {
+                    return {key: derivedKey, salt: salt};
+                });
+            });
+        });
     }
 
-    decrypt(data) {
+    static encrypt(data, password) {
+        const algo = { name: "AES-CBC", iv: crypto.getRandomValues(new Uint8Array(16)) };
+        return Crypt.keyFromPassword(password).then((k) => {
+            return crypto.subtle.encrypt(algo, k.key, new TextEncoder().encode(data)).then(encrypted => {
+                return { data: encrypted, iv: algo.iv, salt: k.salt};
+            });
+        });
+    }
+
+    static decrypt(data, password) {
+        const algo = { name: "AES-CBC", iv: data.iv};
+        return Crypt.keyFromPassword(password, data.salt).then(key => {
+            return crypto.subtle.decrypt(algo, key.key, data.data).then(decrypted => {
+                return new TextDecoder().decode(decrypted);
+            });
+        }).catch(e => {
+            console.error("Incorrect password. Decryption failed.");
+        });
     }
 }
 
@@ -137,7 +194,6 @@ class JAPM {
     /** @type {User} */
     #user;
     #fileHandler;
-    #crypt;
     /** @type {JAPM.State} */
     #state;
 
@@ -148,8 +204,7 @@ class JAPM {
 
     constructor() {
         this.#fileHandler = new FileHandler();
-        this.#crypt = new Crypt();
-        this.updateState(JAPM.State.UNAUTHENTICATED);
+        this.updateState(JAPM.State.AUTHENTICATED);
     }
 
     setUser(user) {
@@ -242,6 +297,12 @@ class JAPM {
     addCred(name, url, username, password) {
         this.#user.addCredential(new Credential(username, password, url, name));
         this.buildCredsTable();
+    }
+
+    exportData() {
+        const data = this.#user.toJSON();
+        const encrypted = Crypt.encrypt(data);
+        this.#fileHandler.writeToFile(encrypted);
     }
 
 }

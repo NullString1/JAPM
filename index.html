@@ -34,9 +34,9 @@
             </div>
         </div>
         <div class="d-flex flex-row d-none justify-self-center" id="main-container">
-            <div class="d-flex flex-column ms-2 mb-2 me-5 w-50">
+            <div class="d-flex flex-column ms-2 mb-3 me-5 w-50">
                 <div id="add-cred-container"
-                    class="container border mt-5 ms-3 p-2 d-flex flex-column justify-content-center">
+                    class="container border mt-4 ms-3 p-2 d-flex flex-column justify-content-center">
                     <h3 class="text-center">Add Password</h3>
                     <div class="d-flex flex-column">
                         <div class="mb-3">
@@ -60,39 +60,39 @@
                     </div>
                 </div>
                 <div id="gen-pass-container"
-                    class="container border mt-5 ms-3 p-2 d-flex flex-column justify-content-center d-none">
+                    class="container border mt-4 ms-3 p-2 d-flex flex-column justify-content-center">
                     <h3 class="text-center">Generate Password</h3>
-                    <div class="d-flex flex-column">
-                        <div class="mb-3">
-                            <label for="length" class="form-label">Length</label>
-                            <input type="number" class="form-control" id="length" name="length" value="10">
+                    <div class="d-inline-flex flex-column">
+                        <div class="mb-3 d-inline-flex">
+                            <label for="length" class="form-label align-content-end">Length</label>
+                            <input type="number" class="form-control ms-2" id="length" name="length" value="10">
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 d-inline-flex justify-content-between">
                             <label for="uppercase" class="form-label">Uppercase characters</label>
-                            <input type="checkbox" class="form-check-input" id="uppercase" name="uppercase">
+                            <input type="checkbox" class="form-check-input ms-2" id="uppercase" name="uppercase">
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 d-inline-flex justify-content-between">
                             <label for="lowercase" class="form-label">Lowercase characters</label>
-                            <input type="checkbox" class="form-check-input" id="lowercase" name="lowercase">
+                            <input type="checkbox" class="form-check-input ms-2" id="lowercase" name="lowercase">
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 d-inline-flex justify-content-between">
                             <label for="numbers" class="form-label">Numbers (0-9)</label>
-                            <input type="checkbox" class="form-check-input" id="numbers" name="numbers">
+                            <input type="checkbox" class="form-check-input ms-2" id="numbers" name="numbers">
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 d-inline-flex justify-content-between">
                             <label for="symbols" class="form-label">Symbols (?-+=/...)</label>
-                            <input type="checkbox" class="form-check-input" id="symbols" name="symbols">
+                            <input type="checkbox" class="form-check-input ms-2" id="symbols" name="symbols">
                         </div>
                         <button id="gen-pass-submit" type="submit"
                             class="btn btn-primary align-self-center">Generate</button>
-                        <div class="mb-3">
+                        <div class="mb-3 border text-center mt-2">
                             <span id="gen-pass-span">pass</span>
                         </div>
                     </div>
                 </div>
             </div>
             <div id="list-cred-container"
-                class="container border mt-5 ms-3 me-3 p-2 d-flex justify-content-center flex-column">
+                class="container border mt-4 ms-3 me-3 mb-3 p-2 d-flex flex-column">
                 <div>
                     <h3 class="text-center">View Passwords</h3>
                     <table id="creds-table" class="table table-responsive">
