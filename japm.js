@@ -62,6 +62,10 @@ class User {
             credentials: this.#credentials.map(cred => cred.toJSON())
         });
     }
+
+    getPasswordHash() {
+        return this.#password_hash;
+    }
 }
 
 class Credential {
@@ -142,45 +146,50 @@ class FileHandler {
     }
 
     writeToFile(data) {
+        const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "japm.json";
+        a.click();
     }
 }
 
 class Crypt {
-    static keyFromPassword(password, salt_=null) {
+    static keyFromPassword(password_hash, salt_ = null) {
         // Hash the password, then import it, then derive a key from it with PBKDF2 for AES-CBC
-        return crypto.subtle.digest("SHA-256", new TextEncoder().encode(password)).then(hash => {
-            return crypto.subtle.importKey("raw", hash, { name: "PBKDF2" }, false, ["deriveKey"]).then(key => {
-                const salt = salt_==null ? crypto.getRandomValues(new Uint8Array(16)) : salt_;
-                return crypto.subtle.deriveKey(
-                    {
-                        name: "PBKDF2",
-                        salt: salt,
-                        iterations: 100000,
-                        hash: "SHA-256"
-                    },
-                    key,
-                    { name: "AES-CBC", length: 256 },
-                    false,
-                    ["encrypt", "decrypt"]
-                ).then(derivedKey => {
-                    return {key: derivedKey, salt: salt};
-                });
+        return crypto.subtle.importKey("raw", password_hash, { name: "PBKDF2" }, false, ["deriveKey"]).then(key => {
+            const salt = salt_ == null ? crypto.getRandomValues(new Uint8Array(16)) : salt_;
+            return crypto.subtle.deriveKey(
+                {
+                    name: "PBKDF2",
+                    salt: salt,
+                    iterations: 100000,
+                    hash: "SHA-256"
+                },
+                key,
+                { name: "AES-CBC", length: 256 },
+                false,
+                ["encrypt", "decrypt"]
+            ).then(derivedKey => {
+                return { key: derivedKey, salt: salt };
             });
         });
+
     }
 
-    static encrypt(data, password) {
+    static encrypt(data, password_hash) {
         const algo = { name: "AES-CBC", iv: crypto.getRandomValues(new Uint8Array(16)) };
-        return Crypt.keyFromPassword(password).then((k) => {
+        return Crypt.keyFromPassword(password_hash).then((k) => {
             return crypto.subtle.encrypt(algo, k.key, new TextEncoder().encode(data)).then(encrypted => {
-                return { data: encrypted, iv: algo.iv, salt: k.salt};
+                return { data: new Uint8Array(encrypted).map(b => b.toString(16)).join(""), iv: algo.iv.map(b => b.toString(16)).join(""), salt: k.salt.map(b => b.toString(16)).join("") };
             });
         });
     }
 
-    static decrypt(data, password) {
-        const algo = { name: "AES-CBC", iv: data.iv};
-        return Crypt.keyFromPassword(password, data.salt).then(key => {
+    static decrypt(data, password_hash) {
+        const algo = { name: "AES-CBC", iv: data.iv };
+        return Crypt.keyFromPassword(password_hash, data.salt).then(key => {
             return crypto.subtle.decrypt(algo, key.key, data.data).then(decrypted => {
                 return new TextDecoder().decode(decrypted);
             });
@@ -270,6 +279,9 @@ class JAPM {
                     password
                 );
             });
+            $("#save-button").click(() => {
+                this.exportData();
+            });
         });
     }
 
@@ -301,8 +313,9 @@ class JAPM {
 
     exportData() {
         const data = this.#user.toJSON();
-        const encrypted = Crypt.encrypt(data);
-        this.#fileHandler.writeToFile(encrypted);
+        Crypt.encrypt(data, this.#user.getPasswordHash()).then(encrypted => {
+            this.#fileHandler.writeToFile(encrypted);
+        });
     }
 
 }
