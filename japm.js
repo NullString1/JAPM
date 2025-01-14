@@ -4,9 +4,15 @@ class User {
     #credentials = [];
     #created_at;
 
-    constructor(username, password_hash) {
+    constructor(username, password_hash=null, password=null) {
         this.#username = username;
-        this.#password_hash = password_hash;
+        if (password_hash == null && password != null) {
+            this.setPassword(password);
+        } else if (password_hash != null) {
+            this.#password_hash = password_hash;
+        } else {
+            throw new Error("Either password hash or password must be provided.");
+        }
         this.#created_at = new Date();
     }
 
@@ -245,20 +251,8 @@ class JAPM {
     login(username, password) {
         const fileinput = $("#load-input")[0];
         if (fileinput.files.length === 0) {
-            this.#user = new User(username, password);
-            if (this.#user != undefined && this.#user.getUsername() === username) {
-                this.#user.checkPassword(password).then(res => {
-                    if (res) {
-                        this.updateState(JAPM.State.AUTHENTICATED);
-                    } else {
-                        console.log("Invalid password");
-                        $("#login-error").removeClass("d-none");
-                    }
-                });
-            } else {
-                console.log("Invalid username");
-                $("#login-error").removeClass("d-none");
-            }
+            this.#user = new User(username, null, password);
+            this.updateState(JAPM.State.AUTHENTICATED);
         } else {
             const file = fileinput.files[0];
             const reader = new FileReader();
@@ -273,7 +267,7 @@ class JAPM {
                         decrypted = JSON.parse(decrypted);
                         decrypted.password_hash = Crypt.toUint8Array(decrypted.password_hash);
                         decrypted.credentials = decrypted.credentials.map(c => JSON.parse(c));
-                        const user = new User(decrypted.username, decrypted.password_hash);
+                        const user = new User(decrypted.username, decrypted.password_hash, null);
                         user.setCredentials(decrypted.credentials.map(cred => new Credential(cred.username, cred.password, cred.url, cred.name)));
                         this.setUser(user);
                         if (this.#user.getUsername() === username) {
@@ -287,7 +281,14 @@ class JAPM {
                                     return;
                                 }
                             });
+                        } else {
+                            console.log("Invalid username");
+                            $("#login-error").removeClass("d-none");
+                            return;
                         }
+                    }).catch(e => {
+                        console.error("Decryption failed.");
+                        $("#login-error").removeClass("d-none");
                     });
                 });
             };
