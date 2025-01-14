@@ -4,9 +4,9 @@ class User {
     #credentials = [];
     #created_at;
 
-    constructor(username, password) {
+    constructor(username, password_hash) {
         this.#username = username;
-        this.setPassword(password);
+        this.#password_hash = password_hash;
         this.#created_at = new Date();
     }
 
@@ -57,7 +57,7 @@ class User {
     toJSON() {
         return JSON.stringify({
             username: this.#username,
-            password_hash: new Uint8Array(this.#password_hash).map(b => b.toString(16)).join(""),
+            password_hash: Crypt.toHex(this.#password_hash),
             created_at: this.#created_at,
             credentials: this.#credentials.map(cred => cred.toJSON())
         });
@@ -179,10 +179,11 @@ class Crypt {
     }
 
     static encrypt(data, password_hash) {
+        console.log("Password hash: " + Array.from(new Uint8Array(password_hash)).map(b => b.toString(16)).join(""));
         const algo = { name: "AES-CBC", iv: crypto.getRandomValues(new Uint8Array(16)) };
         return Crypt.keyFromPassword(password_hash).then((k) => {
             return crypto.subtle.encrypt(algo, k.key, new TextEncoder().encode(data)).then(encrypted => {
-                return { data: new Uint8Array(encrypted).map(b => b.toString(16)).join(""), iv: algo.iv.map(b => b.toString(16)).join(""), salt: k.salt.map(b => b.toString(16)).join("") };
+                return { data: Crypt.toHex(encrypted), iv: Crypt.toHex(algo.iv), salt: Crypt.toHex(k.salt) };
             });
         });
     }
@@ -196,6 +197,14 @@ class Crypt {
         }).catch(e => {
             console.error("Incorrect password. Decryption failed.");
         });
+    }
+
+    static toUint8Array(hex) {
+        return Uint8Array.from(hex.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)));
+    }
+
+    static toHex(uint8) {
+        return (new Uint8Array(uint8)).reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
     }
 }
 
@@ -234,18 +243,55 @@ class JAPM {
     };
 
     login(username, password) {
-        if (this.#user != undefined && this.#user.getUsername() === username) {
-            this.#user.checkPassword(password).then(res => {
-                if (res) {
-                    this.updateState(JAPM.State.AUTHENTICATED);
-                } else {
-                    console.log("Invalid password");
-                    $("#login-error").removeClass("d-none");
-                }
-            });
+        const fileinput = $("#load-input")[0];
+        if (fileinput.files.length === 0) {
+            this.#user = new User(username, password);
+            if (this.#user != undefined && this.#user.getUsername() === username) {
+                this.#user.checkPassword(password).then(res => {
+                    if (res) {
+                        this.updateState(JAPM.State.AUTHENTICATED);
+                    } else {
+                        console.log("Invalid password");
+                        $("#login-error").removeClass("d-none");
+                    }
+                });
+            } else {
+                console.log("Invalid username");
+                $("#login-error").removeClass("d-none");
+            }
         } else {
-            console.log("Invalid username");
-            $("#login-error").removeClass("d-none");
+            const file = fileinput.files[0];
+            const reader = new FileReader();
+            reader.onload = () => {
+                const data = JSON.parse(reader.result);
+                data.data = Crypt.toUint8Array(data.data);
+                data.iv = Crypt.toUint8Array(data.iv);
+                data.salt = Crypt.toUint8Array(data.salt);
+                crypto.subtle.digest('SHA-256', new TextEncoder().encode(password)).then(hash => {
+                    console.log("Password hash: " + Array.from(new Uint8Array(hash)).map(b => b.toString(16)).join(""));
+                    Crypt.decrypt(data, hash).then(decrypted => {
+                        decrypted = JSON.parse(decrypted);
+                        decrypted.password_hash = Crypt.toUint8Array(decrypted.password_hash);
+                        decrypted.credentials = decrypted.credentials.map(c => JSON.parse(c));
+                        const user = new User(decrypted.username, decrypted.password_hash);
+                        user.setCredentials(decrypted.credentials.map(cred => new Credential(cred.username, cred.password, cred.url, cred.name)));
+                        this.setUser(user);
+                        if (this.#user.getUsername() === username) {
+                            this.#user.checkPassword(password).then(res => {
+                                if (res) {
+                                    this.updateState(JAPM.State.AUTHENTICATED);
+                                    return;
+                                } else {
+                                    console.log("Invalid password");
+                                    $("#login-error").removeClass("d-none");
+                                    return;
+                                }
+                            });
+                        }
+                    });
+                });
+            };
+            reader.readAsText(file);
         }
     }
 
@@ -255,6 +301,9 @@ class JAPM {
             $("#login-submit").click(() => {
                 console.log("Login clicked");
                 this.login($("#login-username").val(), $("#login-password").val());
+            });
+            $("#load-button").click(() => {
+                $("#load-input").click();
             });
         });
     }
@@ -320,7 +369,7 @@ class JAPM {
 
 }
 
-document.user = new User("u", "p");
+//document.user = new User("u", "p");
 document.japm = new JAPM();
-document.japm.setUser(document.user);
-document.user.addCredential(new Credential("user1", "pass1", "example.com", "example"));
+//document.japm.setUser(document.user);
+//document.user.addCredential(new Credential("user1", "pass1", "example.com", "example"));
