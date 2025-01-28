@@ -312,8 +312,14 @@ class JAPM {
             $("#load-input").change(() => {
                 $("#login-submit").text("Login");
             });
+            $("#reset-data-button").click(() => {
+                localStorage.removeItem("japm");
+                $("#login-submit").text("Register");
+                $("#reset-japm").addClass("d-none");
+            });
             if (localStorage.getItem("japm") != null) {
                 $("#login-submit").text("Login");
+                $("#reset-japm").removeClass("d-none");
             }
         });
     }

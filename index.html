@@ -15,13 +15,13 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="japm.js"></script>
     <section class="d-flex flex-row">
-        <div id="login-container" class="container border mt-5 p-2 w-25 align-self-center">
+        <div id="login-container" class="container border mt-5 p-2 w-25 align-self-center" style="flex-basis: fit-content;">
             <div>
                 <h1 class="text-center pb-4">Just Another Password Manager</h1>
             </div>
             <div class="custom-file">
                 <input type="file" id="load-input" class="custom-file-input d-none"></input>
-                <button id="load-button" class="btn btn-primary w-100 mb-3 mt-2">Load JSON Data</button>
+                <button id="load-button" class="btn btn-primary w-100 mb-3 mt-2">Load JSON Data Backup</button>
             </div>
             <div class="flex-column d-flex">
                 <h3 class="text-center">Login</h3>
@@ -33,9 +33,32 @@
                     <label for="password" class="form-label">Master Password:</label>
                     <input type="password" class="form-control" id="login-password" name="password">
                 </div>
-                <button id="login-submit" type="submit" class="btn btn-primary w-25 align-self-center">Register</button>
+                <div class="mb-3 d-flex">
+                    <button id="reset-japm" class="btn btn-danger me-2 d-none" data-bs-toggle="modal" data-bs-target="#reset-modal">RESET</button>
+                    <button id="login-submit" type="submit"
+                        class="btn btn-primary flex-grow-1 align-self-center">Register</button>
+                </div>
                 <span id="login-error" class="text-danger d-none">Incorrect username or password</span>
             </div>
+            <div id="reset-modal" class="modal" tabindex="-1">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Reset JAPM data?</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Do you wish to reset JAPM completely.
+                        Warning: you will only be able to restore data with the json backup
+                      </p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                      <button id="reset-data-button" type="button" class="btn btn-danger" data-bs-dismiss="modal">Delete data</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
         </div>
         <div class="d-flex flex-row d-none justify-self-center" id="main-container">
             <div class="d-flex flex-column ms-2 mb-3 me-5 w-50">
@@ -95,8 +118,7 @@
                     </div>
                 </div>
             </div>
-            <div id="list-cred-container"
-                class="container border mt-4 ms-3 me-3 mb-3 p-2 d-flex flex-column">
+            <div id="list-cred-container" class="container border mt-4 ms-3 me-3 mb-3 p-2 d-flex flex-column">
                 <div>
                     <h3 class="text-center">View Passwords</h3>
                     <table id="creds-table" class="table table-responsive">
