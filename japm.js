@@ -219,7 +219,7 @@ class Crypt {
                 });
                 return decryptedData;
             }).catch(() => {
-                console.error("Decryption failed.");
+                console.error("Decryption of blob failed.");
             });
         });
     }
@@ -272,11 +272,16 @@ class JAPM {
         if (fileinput.files.length === 0) { // Fresh start or local storage
             if (localStorage.getItem("japm") == null) { // Complete fresh start
                 this.#user = new User(username, null, password);
+                const sInterval = setInterval(() => {
+                    if (this.#user.getPasswordHash() != null) {
+                        clearInterval(sInterval);
+                        this.saveDataLS();
+                    }
+                }, 100);
                 this.updateState(JAPM.State.AUTHENTICATED);
-                this.saveDataLS();
                 return;
             }
-            this.loadDataLS(username, password); // Load data from local storage
+            this.loadDataLS(username, password);
         } else { // Data loaded from backuo json file
             const file = fileinput.files[0];
             const reader = new FileReader();
@@ -284,20 +289,22 @@ class JAPM {
                 const data = JSON.parse(reader.result);
                 Crypt.decryptBlob(data, password).then(data => {
                     const user = new User(data.username, data.password_hash, null);
-                    user.setCredentials(decrypted.credentials);
+                    user.setCredentials(data.credentials);
                     this.setUser(user);
                     if (this.#user.getUsername() != username) {
                         console.log("Invalid username");
                         $("#login-error").removeClass("d-none");
                         return;
                     }
-                }).catch(() => {
+                    this.saveDataLS();
+                    this.updateState(JAPM.State.AUTHENTICATED);
+                }).catch((e) => {
+                    console.error(e);
                     console.error("Invalid password");
                     $("#login-error").removeClass("d-none");
                 });
             };
             reader.readAsText(file);
-            this.saveDataLS();
         };
     }
 
@@ -398,7 +405,7 @@ class JAPM {
         if (data == null) {
             return;
         }
-        Crypt.decryptBlob(JSON.parse(data), password).then(data => {
+        return Crypt.decryptBlob(JSON.parse(data), password).then(data => {
             const user = new User(data.username, data.password_hash, null);
             user.setCredentials(data.credentials);
             this.setUser(user);
@@ -407,6 +414,7 @@ class JAPM {
                 $("#login-error").removeClass("d-none");
                 return;
             }
+            this.updateState(JAPM.State.AUTHENTICATED);
         }).catch(() => {
             console.error("Invalid password");
             $("#login-error").removeClass("d-none");
