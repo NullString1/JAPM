@@ -238,7 +238,7 @@ class JAPM {
     #user;
     #fileHandler;
     /** @type {JAPM.State} */
-    #state;
+    state;
 
     static State = {
         UNAUTHENTICATED: "unauthenticated",
@@ -257,10 +257,10 @@ class JAPM {
     }
 
     updateState(state) {
-        this.#state = state;
+        this.state = state;
         switch (state) {
             case JAPM.State.UNAUTHENTICATED:
-                window.history.pushState({}, "", "/login"); // Change URL to /login
+                window.history.pushState({}, "", "#/login"); // Change URL to /login
                 $("#login-container").removeClass("d-none");
                 $("#main-container").addClass("d-none");
                 if (localStorage.getItem("japm") != null) {
@@ -269,7 +269,7 @@ class JAPM {
                 }
                 break;
             case JAPM.State.AUTHENTICATED:
-                window.history.pushState({}, "", "/main"); // Change URL to /main 
+                window.history.pushState({}, "", "#/main"); // Change URL to /main 
                 $("#login-container").addClass("d-none");
                 $("#main-container").removeClass("d-none");
                 this.buildCredsTable();
@@ -435,4 +435,11 @@ class JAPM {
 
 $(document).ready(() => {
     document.japm = new JAPM();
+});
+
+window.addEventListener("beforeunload", (event) => {
+    if (document.japm != undefined && document.japm.state == JAPM.State.AUTHENTICATED) {
+        document.japm.saveDataLS();
+    };
+    event.preventDefault();
 });
