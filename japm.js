@@ -320,6 +320,7 @@ class JAPM {
             });
             $("#load-input").change(() => {
                 $("#login-submit").text("Login");
+                bootstrap.Toast.getOrCreateInstance($("#data-loaded-toast")[0]).show();
             });
             $("#reset-data-button").click(() => {
                 localStorage.removeItem("japm");

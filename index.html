@@ -15,7 +15,8 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="japm.js"></script>
     <section class="d-flex flex-row">
-        <div id="login-container" class="container border mt-5 p-2 w-25 align-self-center" style="flex-basis: fit-content;">
+        <div id="login-container" class="container border mt-5 p-2 w-25 align-self-center"
+            style="flex-basis: fit-content;">
             <div>
                 <h1 class="text-center pb-4">Just Another Password Manager</h1>
             </div>
@@ -34,7 +35,8 @@
                     <input type="password" class="form-control" id="login-password" name="password">
                 </div>
                 <div class="mb-3 d-flex">
-                    <button id="reset-japm" class="btn btn-danger me-2 d-none" data-bs-toggle="modal" data-bs-target="#reset-modal">RESET</button>
+                    <button id="reset-japm" class="btn btn-danger me-2 d-none" data-bs-toggle="modal"
+                        data-bs-target="#reset-modal">RESET</button>
                     <button id="login-submit" type="submit"
                         class="btn btn-primary flex-grow-1 align-self-center">Register</button>
                 </div>
@@ -42,20 +44,32 @@
             </div>
             <div id="reset-modal" class="modal" tabindex="-1">
                 <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title">Reset JAPM data?</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Reset JAPM data?</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Do you wish to reset JAPM completely.
+                                Warning: you will only be able to restore data with the json backup
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button id="reset-data-button" type="button" class="btn btn-danger"
+                                data-bs-dismiss="modal">Delete data</button>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                      <p>Do you wish to reset JAPM completely.
-                        Warning: you will only be able to restore data with the json backup
-                      </p>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                      <button id="reset-data-button" type="button" class="btn btn-danger" data-bs-dismiss="modal">Delete data</button>
-                    </div>
+                </div>
+            </div>
+            <div class="toast-container position-fixed translate-middle start-50 p-2" style="top:30%">
+                <div id="data-loaded-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="1000">
+                  <div class="toast-header">
+                    <strong class="me-auto">Data loaded successfully</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                  </div>
+                  <div class="toast-body">
+                    Your data was successfully loaded from the JSON file.
                   </div>
                 </div>
               </div>
