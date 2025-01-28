@@ -156,7 +156,7 @@ class FileHandler {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "japm.json";
+        a.download = `japm${new Date().toISOString()}.json`;
         a.click();
     }
 }
