@@ -273,6 +273,7 @@ class JAPM {
             if (localStorage.getItem("japm") == null) { // Complete fresh start
                 this.#user = new User(username, null, password);
                 this.updateState(JAPM.State.AUTHENTICATED);
+                this.saveDataLS();
                 return;
             }
             this.loadDataLS(username, password); // Load data from local storage
@@ -296,6 +297,7 @@ class JAPM {
                 });
             };
             reader.readAsText(file);
+            this.saveDataLS();
         };
     }
 
