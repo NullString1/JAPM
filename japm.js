@@ -260,6 +260,7 @@ class JAPM {
         this.#state = state;
         switch (state) {
             case JAPM.State.UNAUTHENTICATED:
+                window.history.pushState({}, "", "/login"); // Change URL to /login
                 $("#login-container").removeClass("d-none");
                 $("#main-container").addClass("d-none");
                 if (localStorage.getItem("japm") != null) {
@@ -268,6 +269,7 @@ class JAPM {
                 }
                 break;
             case JAPM.State.AUTHENTICATED:
+                window.history.pushState({}, "", "/main"); // Change URL to /main 
                 $("#login-container").addClass("d-none");
                 $("#main-container").removeClass("d-none");
                 this.buildCredsTable();
