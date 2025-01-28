@@ -247,6 +247,8 @@ class JAPM {
 
     constructor() {
         this.#fileHandler = new FileHandler();
+        this.setupLogin();
+        this.setupMainView();
         this.updateState(JAPM.State.UNAUTHENTICATED);
     }
 
@@ -258,10 +260,17 @@ class JAPM {
         this.#state = state;
         switch (state) {
             case JAPM.State.UNAUTHENTICATED:
-                this.setupLogin();
+                $("#login-container").removeClass("d-none");
+                $("#main-container").addClass("d-none");
+                if (localStorage.getItem("japm") != null) {
+                    $("#login-submit").text("Login");
+                    $("#reset-japm").removeClass("d-none");
+                }
                 break;
             case JAPM.State.AUTHENTICATED:
-                this.setupMainView();
+                $("#login-container").addClass("d-none");
+                $("#main-container").removeClass("d-none");
+                this.buildCredsTable();
                 break;
         }
 
@@ -309,54 +318,52 @@ class JAPM {
     }
 
     setupLogin() {
-        $(document).ready(() => {
-            $("#login-container").removeClass("d-none");
-            $("#login-submit").click(() => {
-                console.log("Login clicked");
-                this.login($("#login-username").val(), $("#login-password").val());
-            });
-            $("#load-button").click(() => {
-                $("#load-input").click();
-            });
-            $("#load-input").change(() => {
-                $("#login-submit").text("Login");
-                bootstrap.Toast.getOrCreateInstance($("#data-loaded-toast")[0]).show();
-            });
-            $("#reset-data-button").click(() => {
-                localStorage.removeItem("japm");
-                $("#login-submit").text("Register");
-                $("#reset-japm").addClass("d-none");
-            });
-            if (localStorage.getItem("japm") != null) {
-                $("#login-submit").text("Login");
-                $("#reset-japm").removeClass("d-none");
-            }
+        $("#login-submit").click(() => {
+            this.login($("#login-username").val(), $("#login-password").val());
         });
+        $("#load-button").click(() => {
+            $("#load-input").click();
+        });
+        $("#load-input").change(() => {
+            $("#login-submit").text("Login");
+            bootstrap.Toast.getOrCreateInstance($("#data-loaded-toast")[0]).show();
+        });
+        $("#reset-data-button").click(() => {
+            localStorage.removeItem("japm");
+            $("#login-submit").text("Register");
+            $("#reset-japm").addClass("d-none");
+        });
+        if (localStorage.getItem("japm") != null) {
+            $("#login-submit").text("Login");
+            $("#reset-japm").removeClass("d-none");
+        }
+
     }
 
     setupMainView() {
-        $(document).ready(() => {
-            $("#login-container").addClass("d-none");
-            $("#main-container").removeClass("d-none");
-            this.buildCredsTable();
-            $("#add-cred-submit").click(() => {
-                const name = $("#name").val();
-                const site = $("#site").val();
-                const username = $("#username").val();
-                const password = $("#password").val();
-                if (name === "" || site === "" || username === "" || password === "") {
-                    return;
-                }
-                this.addCred(
-                    name,
-                    site,
-                    username,
-                    password
-                );
-            });
-            $("#save-button").click(() => {
-                this.exportData();
-            });
+        $("#add-cred-submit").click(() => {
+            const name = $("#name").val();
+            const site = $("#site").val();
+            const username = $("#username").val();
+            const password = $("#password").val();
+            if (name === "" || site === "" || username === "" || password === "") {
+                return;
+            }
+            this.addCred(
+                name,
+                site,
+                username,
+                password
+            );
+        });
+        $("#save-button").click(() => {
+            this.exportData();
+        });
+        $("#logout-button").click(() => {
+            this.#user = undefined;
+            this.updateState(JAPM.State.UNAUTHENTICATED);
+            $("#login-username").val("");
+            $("#login-password").val("");
         });
     }
 
@@ -424,4 +431,6 @@ class JAPM {
 
 }
 
-document.japm = new JAPM();
+$(document).ready(() => {
+    document.japm = new JAPM();
+});
