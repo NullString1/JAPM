@@ -4,7 +4,7 @@ class User {
     #credentials = [];
     #created_at;
 
-    constructor(username, password_hash=null, password=null) {
+    constructor(username, password_hash = null, password = null) {
         this.#username = username;
         if (password_hash == null && password != null) {
             this.setPassword(password);
@@ -205,6 +205,25 @@ class Crypt {
         });
     }
 
+    static decryptBlob(data, password) {
+        data.data = Crypt.toUint8Array(data.data);
+        data.iv = Crypt.toUint8Array(data.iv);
+        data.salt = Crypt.toUint8Array(data.salt);
+        return crypto.subtle.digest('SHA-256', new TextEncoder().encode(password)).then(hash => {
+            return Crypt.decrypt(data, hash).then(decrypted => {
+                const decryptedData = JSON.parse(decrypted);
+                decryptedData.password_hash = Crypt.toUint8Array(decryptedData.password_hash);
+                decryptedData.credentials = decryptedData.credentials.map(c => {
+                    const cred = JSON.parse(c);
+                    return new Credential(cred.username, cred.password, cred.url, cred.name);
+                });
+                return decryptedData;
+            }).catch(() => {
+                console.error("Decryption failed.");
+            });
+        });
+    }
+
     static toUint8Array(hex) {
         return Uint8Array.from(hex.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)));
     }
@@ -250,50 +269,45 @@ class JAPM {
 
     login(username, password) {
         const fileinput = $("#load-input")[0];
-        if (fileinput.files.length === 0) {
-            this.#user = new User(username, null, password);
-            this.updateState(JAPM.State.AUTHENTICATED);
-        } else {
+        if (fileinput.files.length === 0) { // Fresh start or local storage
+            if (localStorage.getItem("japm") == null) { // Complete fresh start
+                this.#user = new User(username, null, password);
+                this.updateState(JAPM.State.AUTHENTICATED);
+                return;
+            }
+            this.loadDataLS(username, password); // Load data from local storage
+        } else { // Data loaded from backuo json file
             const file = fileinput.files[0];
             const reader = new FileReader();
             reader.onload = () => {
                 const data = JSON.parse(reader.result);
-                data.data = Crypt.toUint8Array(data.data);
-                data.iv = Crypt.toUint8Array(data.iv);
-                data.salt = Crypt.toUint8Array(data.salt);
-                crypto.subtle.digest('SHA-256', new TextEncoder().encode(password)).then(hash => {
-                    console.log("Password hash: " + Array.from(new Uint8Array(hash)).map(b => b.toString(16)).join(""));
-                    Crypt.decrypt(data, hash).then(decrypted => {
-                        decrypted = JSON.parse(decrypted);
-                        decrypted.password_hash = Crypt.toUint8Array(decrypted.password_hash);
-                        decrypted.credentials = decrypted.credentials.map(c => JSON.parse(c));
-                        const user = new User(decrypted.username, decrypted.password_hash, null);
-                        user.setCredentials(decrypted.credentials.map(cred => new Credential(cred.username, cred.password, cred.url, cred.name)));
-                        this.setUser(user);
-                        if (this.#user.getUsername() === username) {
-                            this.#user.checkPassword(password).then(res => {
-                                if (res) {
-                                    this.updateState(JAPM.State.AUTHENTICATED);
-                                    return;
-                                } else {
-                                    console.log("Invalid password");
-                                    $("#login-error").removeClass("d-none");
-                                    return;
-                                }
-                            });
-                        } else {
-                            console.log("Invalid username");
-                            $("#login-error").removeClass("d-none");
-                            return;
-                        }
-                    }).catch(e => {
-                        console.error("Decryption failed.");
+                Crypt.decryptBlob(data, password).then(data => {
+                    const user = new User(data.username, data.password_hash, null);
+                    user.setCredentials(decrypted.credentials);
+                    this.setUser(user);
+                    if (this.#user.getUsername() === username) {
+                        this.#user.checkPassword(password).then(res => {
+                            if (res) {
+                                this.updateState(JAPM.State.AUTHENTICATED);
+                                return;
+                            } else {
+                                console.log("Invalid password");
+                                $("#login-error").removeClass("d-none");
+                                return;
+                            }
+                        });
+                    } else {
+                        console.log("Invalid username");
                         $("#login-error").removeClass("d-none");
-                    });
+                        return;
+                    }
+                }).catch(() => {
+                    console.error("Decryption failed.");
+                    $("#login-error").removeClass("d-none");
                 });
             };
             reader.readAsText(file);
-        }
+        };
     }
 
     setupLogin() {
@@ -309,6 +323,9 @@ class JAPM {
             $("#load-input").change(() => {
                 $("#login-submit").text("Login");
             });
+            if (localStorage.getItem("japm") != null) {
+                $("#login-submit").text("Login");
+            }
         });
     }
 
@@ -362,12 +379,50 @@ class JAPM {
     addCred(name, url, username, password) {
         this.#user.addCredential(new Credential(username, password, url, name));
         this.buildCredsTable();
+        this.saveDataLS();
     }
 
     exportData() {
         const data = this.#user.toJSON();
         Crypt.encrypt(data, this.#user.getPasswordHash()).then(encrypted => {
             this.#fileHandler.writeToFile(encrypted);
+        });
+    }
+
+    saveDataLS() {
+        const data = this.#user.toJSON();
+        Crypt.encrypt(data, this.#user.getPasswordHash()).then(encrypted => {
+            localStorage.setItem("japm", JSON.stringify(encrypted));
+        });
+    }
+
+    loadDataLS(username, password) {
+        let data = localStorage.getItem("japm");
+        if (data == null) {
+            return;
+        }
+        Crypt.decryptBlob(JSON.parse(data), password).then(data => {
+            const user = new User(data.username, data.password_hash, null);
+            user.setCredentials(data.credentials);
+            this.setUser(user);
+            if (this.#user.getUsername() === username) {
+                this.#user.checkPassword(password).then(res => {
+                    if (res) {
+                        this.updateState(JAPM.State.AUTHENTICATED);
+                        return;
+                    } else {
+                        console.log("Invalid password");
+                        $("#login-error").removeClass("d-none");
+                        return;
+                    }
+                });
+            } else {
+                console.log("Invalid username");
+                $("#login-error").removeClass("d-none");
+                return;
+            }
+        }).catch(() => {
+            $("#login-error").removeClass("d-none");
         });
     }
 
