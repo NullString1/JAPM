@@ -285,24 +285,13 @@ class JAPM {
                     const user = new User(data.username, data.password_hash, null);
                     user.setCredentials(decrypted.credentials);
                     this.setUser(user);
-                    if (this.#user.getUsername() === username) {
-                        this.#user.checkPassword(password).then(res => {
-                            if (res) {
-                                this.updateState(JAPM.State.AUTHENTICATED);
-                                return;
-                            } else {
-                                console.log("Invalid password");
-                                $("#login-error").removeClass("d-none");
-                                return;
-                            }
-                        });
-                    } else {
+                    if (this.#user.getUsername() != username) {
                         console.log("Invalid username");
                         $("#login-error").removeClass("d-none");
                         return;
                     }
                 }).catch(() => {
-                    console.error("Decryption failed.");
+                    console.error("Invalid password");
                     $("#login-error").removeClass("d-none");
                 });
             };
@@ -405,23 +394,13 @@ class JAPM {
             const user = new User(data.username, data.password_hash, null);
             user.setCredentials(data.credentials);
             this.setUser(user);
-            if (this.#user.getUsername() === username) {
-                this.#user.checkPassword(password).then(res => {
-                    if (res) {
-                        this.updateState(JAPM.State.AUTHENTICATED);
-                        return;
-                    } else {
-                        console.log("Invalid password");
-                        $("#login-error").removeClass("d-none");
-                        return;
-                    }
-                });
-            } else {
+            if (this.#user.getUsername() != username) {
                 console.log("Invalid username");
                 $("#login-error").removeClass("d-none");
                 return;
             }
         }).catch(() => {
+            console.error("Invalid password");
             $("#login-error").removeClass("d-none");
         });
     }
