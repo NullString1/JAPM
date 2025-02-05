@@ -435,7 +435,32 @@ class JAPM {
             rows.forEach(td => {
                 tr.appendChild(td);
             });
+
             tr.addEventListener("click", () => {
+                const modal = new bootstrap.Modal($("#view-cred-modal")[0]);
+                $("#view-cred-name").text(cred.getName());
+                $("#view-cred-url").text(cred.getURL());
+                $("#view-cred-username").text(cred.getUsername());
+                $("#view-cred-password").text(cred.getPassword());
+                $("#view-cred-modal span").click((e) => {
+                    navigator.clipboard.writeText(e.target.textContent);
+                });
+                modal.show();
+            });
+
+            const delButton = document.createElement("button");
+            delButton.classList.add("btn", "btn-danger", "bi", "bi-trash3-fill", "mt-1", "ms-1");
+            delButton.addEventListener("click", (e) => {
+                this.#user.removeCredential(cred);
+                this.buildCredsTable();
+                this.saveDataLS();
+                e.stopPropagation();
+            });
+            tr.appendChild(delButton);
+
+            const editButton = document.createElement("button");
+            editButton.classList.add("btn", "btn-info", "bi", "bi-pencil-square", "mt-1", "ms-1");
+            editButton.addEventListener("click", (e) => {
                 const modal = new bootstrap.Modal($("#edit-cred-modal")[0]);
                 $("#edit-cred-name").val(cred.getName());
                 $("#edit-cred-url").val(cred.getURL());
@@ -450,17 +475,11 @@ class JAPM {
                     this.saveDataLS();
                     modal.hide();
                 });
+                e.stopPropagation();
                 modal.show();
             });
-            const delButton = document.createElement("button");
-            delButton.classList.add("btn", "btn-danger", "bi", "bi-trash3-fill");
-            delButton.addEventListener("click", (e) => {
-                this.#user.removeCredential(cred);
-                this.buildCredsTable();
-                this.saveDataLS();
-                e.stopPropagation();
-            });
-            tr.appendChild(delButton);
+            tr.appendChild(editButton);
+
             tableBody.append(tr);
         });
     }

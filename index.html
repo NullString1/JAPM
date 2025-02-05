@@ -4,7 +4,7 @@
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <title>Just Another Password Manager</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
@@ -114,20 +114,22 @@
                         <div class="mb-3 d-inline-flex justify-content-between">
                             <label for="uppercase" class="form-label">Uppercase characters</label>
                             <input type="checkbox" class="form-check-input ms-2" id="gen-pass-uppercase"
-                                name="uppercase">
+                                name="uppercase" checked>
                         </div>
                         <div class="mb-3 d-inline-flex justify-content-between">
                             <label for="lowercase" class="form-label">Lowercase characters</label>
                             <input type="checkbox" class="form-check-input ms-2" id="gen-pass-lowercase"
-                                name="lowercase">
+                                name="lowercase" checked>
                         </div>
                         <div class="mb-3 d-inline-flex justify-content-between">
                             <label for="numbers" class="form-label">Numbers (0-9)</label>
-                            <input type="checkbox" class="form-check-input ms-2" id="gen-pass-numbers" name="numbers">
+                            <input type="checkbox" class="form-check-input ms-2" id="gen-pass-numbers" name="numbers"
+                                checked>
                         </div>
                         <div class="mb-3 d-inline-flex justify-content-between">
                             <label for="symbols" class="form-label">Symbols (?-+=/...)</label>
-                            <input type="checkbox" class="form-check-input ms-2" id="gen-pass-symbols" name="symbols">
+                            <input type="checkbox" class="form-check-input ms-2" id="gen-pass-symbols" name="symbols"
+                                checked>
                         </div>
                         <button id="gen-pass-submit" type="submit"
                             class="btn btn-primary align-self-center">Generate</button>
@@ -137,15 +139,12 @@
                     </div>
                 </div>
             </div>
-            <div class="toast-container position-fixed translate-middle start-50 p-2" style="top:30%">
+            <div class="toast-container position-fixed translate-middle start-50 p-2" style="top:50%">
                 <div id="password-copied-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
-                    data-bs-delay="1000">
+                    data-bs-delay="1500">
                     <div class="toast-header">
                         <strong class="me-auto">Password copied to clipboard</strong>
                         <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
-                    <div class="toast-body">
-                        Your data was successfully loaded from the JSON file.
                     </div>
                 </div>
             </div>
@@ -178,6 +177,37 @@
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             <button id="edit-cred-save" type="button" class="btn btn-primary"
                                 data-bs-dismiss="modal">Save password</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="view-cred-modal" class="modal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">View</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="view-cred-name" class="form-label">Site Name</label>
+                                <span type="text" class="form-control" id="view-cred-name" name="site"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label for="view-cred-url" class="form-label">Site URL</label>
+                                <span type="text" class="form-control" id="view-cred-url" name="site"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label for="view-cred-username" class="form-label">Username / Email</label>
+                                <span type="text" class="form-control" id="view-cred-username" name="site"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label for="view-cred-password" class="form-label">Password</label>
+                                <span type="text" class="form-control" id="view-cred-password" name="site"></span>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
