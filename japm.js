@@ -417,16 +417,38 @@ class JAPM {
         const tableBody = $("#creds-table tbody");
         tableBody.empty();
         this.#user.getCredentials().forEach((/** @type {Credential} */cred) => {
-            tableBody.append(
-                `<tr>
-                <td>${cred.getName()}</td>
-                <td>${cred.getURL()}</td>
-                <td>${cred.getUsername()}</td>
-                <td>${cred.getPassword()}</td>
-                <td>${cred.getCreatedAt().toGMTString()}</td>
-                <td>${cred.getLastModAt().toGMTString()}</td>
-            </tr>`
-            );
+            const tr = document.createElement("tr");
+            let rows = [];
+            for (let i = 0; i < 6; i++) {
+                rows.push(document.createElement("td"));
+            }
+            rows[0].textContent = cred.getName();
+            rows[1].textContent = cred.getURL();
+            rows[2].textContent = cred.getUsername();
+            rows[3].textContent = cred.getPassword();
+            rows[4].textContent = cred.getCreatedAt().toGMTString();
+            rows[5].textContent = cred.getLastModAt().toGMTString();
+            rows.forEach(td => {
+                tr.appendChild(td);
+            });
+            tr.addEventListener("click", () => {
+                const modal = new bootstrap.Modal($("#edit-cred-modal")[0]);
+                $("#edit-cred-name").val(cred.getName());
+                $("#edit-cred-url").val(cred.getURL());
+                $("#edit-cred-username").val(cred.getUsername());
+                $("#edit-cred-password").val(cred.getPassword());
+                $("#edit-cred-save").click(() => {
+                    cred.setName($("#edit-cred-name").val());
+                    cred.setURL($("#edit-cred-url").val());
+                    cred.setUsername($("#edit-cred-username").val());
+                    cred.setPassword($("#edit-cred-password").val());
+                    this.buildCredsTable();
+                    this.saveDataLS();
+                    modal.hide();
+                });
+                modal.show();
+            });
+            tableBody.append(tr);
         });
     }
 
