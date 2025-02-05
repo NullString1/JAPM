@@ -52,6 +52,10 @@ class User {
         this.#credentials = credentials;
     }
 
+    removeCredential(credential) {
+        this.#credentials = this.#credentials.filter(cred => cred !== credential);
+    }
+
     addCredential(credential) {
         this.#credentials.push(credential);
     }
@@ -448,6 +452,15 @@ class JAPM {
                 });
                 modal.show();
             });
+            const delButton = document.createElement("button");
+            delButton.classList.add("btn", "btn-danger", "bi", "bi-trash3-fill");
+            delButton.addEventListener("click", (e) => {
+                this.#user.removeCredential(cred);
+                this.buildCredsTable();
+                this.saveDataLS();
+                e.stopPropagation();
+            });
+            tr.appendChild(delButton);
             tableBody.append(tr);
         });
     }
