@@ -233,6 +233,17 @@ class Crypt {
     }
 }
 
+class PasswordGenerator {
+    static generate(length, charset) {
+        let password = "";
+        const randValues = crypto.getRandomValues(new Uint32Array(length));
+        randValues.forEach(v => {
+            password += charset[v % charset.length];
+        });
+        return password
+    }
+}
+
 class JAPM {
     /** @type {User} */
     #user;
@@ -366,6 +377,35 @@ class JAPM {
             this.updateState(JAPM.State.UNAUTHENTICATED);
             $("#login-username").val("");
             $("#login-password").val("");
+        });
+        $("#gen-pass-submit").click(() => {
+            const length = parseInt($("#gen-pass-length").val());
+            const uppercase = $("#gen-pass-uppercase").is(":checked");
+            const lowercase = $("#gen-pass-lowercase").is(":checked");
+            const numbers = $("#gen-pass-numbers").is(":checked");
+            const symbols = $("#gen-pass-symbols").is(":checked");
+            let charset = "";
+            if (uppercase) {
+                charset += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            }
+            if (lowercase) {
+                charset += "abcdefghijklmnopqrstuvwxyz";
+            }
+            if (numbers) {
+                charset += "0123456789";
+            }
+            if (symbols) {
+                charset += "!@#$%^&*()_+-=[]{};':,.<>?";
+            }
+            if (charset === "") {
+                return;
+            }
+            $("#gen-pass-span").text(PasswordGenerator.generate(length, charset));
+        });
+        $("#gen-pass-span").click(() => {
+            navigator.clipboard.writeText($("#gen-pass-span").text()).then(() => {
+                bootstrap.Toast.getOrCreateInstance($("#password-copied-toast")[0]).show();
+            });
         });
     }
 

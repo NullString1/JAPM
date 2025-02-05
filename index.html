@@ -63,16 +63,17 @@
                 </div>
             </div>
             <div class="toast-container position-fixed translate-middle start-50 p-2" style="top:30%">
-                <div id="data-loaded-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="1000">
-                  <div class="toast-header">
-                    <strong class="me-auto">Data loaded successfully</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                  </div>
-                  <div class="toast-body">
-                    Your data was successfully loaded from the JSON file.
-                  </div>
+                <div id="data-loaded-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
+                    data-bs-delay="1000">
+                    <div class="toast-header">
+                        <strong class="me-auto">Data loaded successfully</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        Your data was successfully loaded from the JSON file.
+                    </div>
                 </div>
-              </div>
+            </div>
         </div>
         <div class="d-flex flex-row d-none justify-self-center" id="main-container">
             <div class="d-flex flex-column ms-2 mb-3 me-5 w-50">
@@ -106,29 +107,44 @@
                     <div class="d-inline-flex flex-column">
                         <div class="mb-3 d-inline-flex">
                             <label for="length" class="form-label align-content-end">Length</label>
-                            <input type="number" class="form-control ms-2" id="length" name="length" value="10">
+                            <input type="number" class="form-control ms-2" id="gen-pass-length" name="length"
+                                value="10" max="70" min="5">
                         </div>
                         <div class="mb-3 d-inline-flex justify-content-between">
                             <label for="uppercase" class="form-label">Uppercase characters</label>
-                            <input type="checkbox" class="form-check-input ms-2" id="uppercase" name="uppercase">
+                            <input type="checkbox" class="form-check-input ms-2" id="gen-pass-uppercase"
+                                name="uppercase">
                         </div>
                         <div class="mb-3 d-inline-flex justify-content-between">
                             <label for="lowercase" class="form-label">Lowercase characters</label>
-                            <input type="checkbox" class="form-check-input ms-2" id="lowercase" name="lowercase">
+                            <input type="checkbox" class="form-check-input ms-2" id="gen-pass-lowercase"
+                                name="lowercase">
                         </div>
                         <div class="mb-3 d-inline-flex justify-content-between">
                             <label for="numbers" class="form-label">Numbers (0-9)</label>
-                            <input type="checkbox" class="form-check-input ms-2" id="numbers" name="numbers">
+                            <input type="checkbox" class="form-check-input ms-2" id="gen-pass-numbers" name="numbers">
                         </div>
                         <div class="mb-3 d-inline-flex justify-content-between">
                             <label for="symbols" class="form-label">Symbols (?-+=/...)</label>
-                            <input type="checkbox" class="form-check-input ms-2" id="symbols" name="symbols">
+                            <input type="checkbox" class="form-check-input ms-2" id="gen-pass-symbols" name="symbols">
                         </div>
                         <button id="gen-pass-submit" type="submit"
                             class="btn btn-primary align-self-center">Generate</button>
-                        <div class="mb-3 border text-center mt-2">
-                            <span id="gen-pass-span">pass</span>
+                        <div class="mb-3 border text-center d-flex mt-2">
+                            <span id="gen-pass-span" class="" style="overflow: auto;"></span>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="toast-container position-fixed translate-middle start-50 p-2" style="top:30%">
+                <div id="password-copied-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
+                    data-bs-delay="1000">
+                    <div class="toast-header">
+                        <strong class="me-auto">Password copied to clipboard</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        Your data was successfully loaded from the JSON file.
                     </div>
                 </div>
             </div>
