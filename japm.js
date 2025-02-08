@@ -451,6 +451,7 @@ class JAPM {
             });
             modal.show();
         });
+        $('[data-bs-toggle="tooltip"]').tooltip();
     }
 
     buildCredsTable() {
