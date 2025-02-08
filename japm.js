@@ -402,6 +402,9 @@ class JAPM {
         });
         $("#gen-pass-submit").click(() => {
             const length = parseInt($("#gen-pass-length").val());
+            if (length < 5) {
+                return;
+            }
             const uppercase = $("#gen-pass-uppercase").is(":checked");
             const lowercase = $("#gen-pass-lowercase").is(":checked");
             const numbers = $("#gen-pass-numbers").is(":checked");
