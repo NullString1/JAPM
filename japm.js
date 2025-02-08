@@ -3,6 +3,7 @@ class User {
     #password_hash;
     #credentials = [];
     #created_at;
+    #generator_history = [];
 
     constructor(username, password_hash = null, password = null) {
         this.#username = username;
@@ -69,12 +70,28 @@ class User {
             username: this.#username,
             password_hash: Crypt.toHex(this.#password_hash),
             created_at: this.#created_at,
-            credentials: this.#credentials.map(cred => cred.toJSON())
+            credentials: this.#credentials.map(cred => cred.toJSON()),
+            generator_history: this.#generator_history
         });
     }
 
     getPasswordHash() {
         return this.#password_hash;
+    }
+
+    getGeneratorHistory() {
+        return this.#generator_history;
+    }
+
+    addGeneratorHistory(item) {
+        this.#generator_history.push(item);
+    }
+
+    setGeneratorHistory(history) {
+        this.#generator_history = history;
+        this.#generator_history.forEach(item => {
+            item.date = new Date(item.date);
+        });
     }
 }
 
@@ -238,12 +255,13 @@ class Crypt {
 }
 
 class PasswordGenerator {
-    static generate(length, charset) {
+    static generate(length, charset, user) {
         let password = "";
         const randValues = crypto.getRandomValues(new Uint32Array(length));
         randValues.forEach(v => {
             password += charset[v % charset.length];
         });
+        user.addGeneratorHistory({ date: new Date(), password: password });
         return password
     }
 }
@@ -404,12 +422,34 @@ class JAPM {
             if (charset === "") {
                 return;
             }
-            $("#gen-pass-span").text(PasswordGenerator.generate(length, charset));
+            $("#gen-pass-span").text(PasswordGenerator.generate(length, charset, this.#user));
+            this.saveDataLS();
         });
         $("#gen-pass-span").click(() => {
             navigator.clipboard.writeText($("#gen-pass-span").text()).then(() => {
                 bootstrap.Toast.getOrCreateInstance($("#password-copied-toast")[0]).show();
             });
+        });
+        $("#gen-pass-history").click(() => {
+            const modal = new bootstrap.Modal($("#gen-pass-history-modal")[0]);
+            const table = $("#gen-pass-history-table tbody");
+            table.empty();
+            this.#user.getGeneratorHistory().reverse().forEach(item => {
+                const tr = document.createElement("tr");
+                const date = document.createElement("td");
+                date.textContent = item.date.toGMTString();
+                const password = document.createElement("td");
+                password.textContent = item.password;
+                password.addEventListener("click", (e) => {
+                    navigator.clipboard.writeText(e.target.textContent).then(() => {
+                        bootstrap.Toast.getOrCreateInstance($("#password-copied-toast")[0]).show();
+                    });
+                });
+                tr.appendChild(date);
+                tr.appendChild(password);
+                table.append(tr);
+            });
+            modal.show();
         });
     }
 
@@ -512,6 +552,7 @@ class JAPM {
         return Crypt.decryptBlob(JSON.parse(data), password).then(data => {
             const user = new User(data.username, data.password_hash, null);
             user.setCredentials(data.credentials);
+            user.setGeneratorHistory(data.generator_history);
             this.setUser(user);
             if (this.#user.getUsername() != username) {
                 console.log("Invalid username");

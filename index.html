@@ -131,14 +131,44 @@
                             <input type="checkbox" class="form-check-input ms-2" id="gen-pass-symbols" name="symbols"
                                 checked>
                         </div>
-                        <button id="gen-pass-submit" type="submit"
-                            class="btn btn-primary align-self-center">Generate</button>
+                        <div class="d-flex">
+                            <i id="gen-pass-history" class="bi bi-clock-history align-self-center me-auto"></i>
+                            <button id="gen-pass-submit" type="submit"
+                                class="btn btn-primary align-self-center me-auto">Generate</button>
+                        </div>
                         <div class="mb-3 border text-center d-flex mt-2">
                             <span id="gen-pass-span" class="" style="overflow: auto;"></span>
                         </div>
                     </div>
                 </div>
             </div>
+            <div id="gen-pass-history-modal" class="modal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Password Generator History</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <table id="gen-pass-history-table" class="table table-responsive table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Generated Password</th>
+                                        <th>Generated at</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="toast-container position-fixed translate-middle start-50 p-2" style="top:50%">
                 <div id="password-copied-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
                     data-bs-delay="1500">
@@ -170,13 +200,14 @@
                             </div>
                             <div class="mb-3">
                                 <label for="edit-cred-password" class="form-label">Password</label>
-                                <input type="text" class="form-control" id="edit-cred-password" name="site">
+                                <input type="password" class="form-control" id="edit-cred-password" name="site">
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             <button id="edit-cred-save" type="button" class="btn btn-primary"
-                                data-bs-dismiss="modal">Save password</button>
+                                data-bs-dismiss="modal">Save
+                                password</button>
                         </div>
                     </div>
                 </div>
