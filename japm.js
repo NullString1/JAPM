@@ -439,17 +439,34 @@ class JAPM {
                 const date = document.createElement("td");
                 date.textContent = item.date.toGMTString();
                 const password = document.createElement("td");
+                password.classList.add("user-select-all");
                 password.textContent = item.password;
                 password.addEventListener("click", (e) => {
                     navigator.clipboard.writeText(e.target.textContent).then(() => {
                         bootstrap.Toast.getOrCreateInstance($("#password-copied-toast")[0]).show();
                     });
                 });
+                const delButton = document.createElement("button");
+                delButton.classList.add("btn", "bi", "bi-trash3-fill", "m-1");
+                delButton.addEventListener("click", (e) => {
+                    this.#user.setGeneratorHistory(this.#user.getGeneratorHistory().filter(i => i !== item));
+                    this.saveDataLS();
+                });
                 tr.appendChild(date);
                 tr.appendChild(password);
+                tr.appendChild(delButton);
                 table.append(tr);
             });
+            $("#clear-gen-pass-history").click(() => {
+                this.#user.setGeneratorHistory([]);
+                $("#gen-pass-history-table tbody").empty();
+                this.saveDataLS();
+            });
             modal.show();
+        });
+        $("#edit-cred-password-eye").click(() => {
+            const input = $("#edit-cred-password");
+            input.attr("type", input.attr("type") === "password" ? "text" : "password");
         });
         $('[data-bs-toggle="tooltip"]').tooltip();
     }
