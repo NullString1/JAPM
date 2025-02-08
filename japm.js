@@ -488,8 +488,22 @@ class JAPM {
             rows[1].textContent = cred.getURL();
             rows[2].textContent = cred.getUsername();
             rows[3].textContent = cred.getPassword();
-            rows[4].textContent = cred.getCreatedAt().toGMTString();
-            rows[5].textContent = cred.getLastModAt().toGMTString();
+            rows[4].textContent = cred.getCreatedAt().toLocaleDateString("en-gb", {
+                weekday: "short",
+                year: '2-digit',
+                month: '2-digit',
+                day: '2-digit',
+                hour: "2-digit",
+                minute: "2-digit"
+              });
+            rows[5].textContent = cred.getLastModAt().toLocaleDateString("en-gb", {
+                weekday: "short",
+                year: '2-digit',
+                month: '2-digit',
+                day: '2-digit',
+                hour: "2-digit",
+                minute: "2-digit"
+              });
             rows.forEach(td => {
                 tr.appendChild(td);
             });
