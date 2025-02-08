@@ -80,7 +80,7 @@
         <div class="d-flex flex-row d-none flex-lg-grow-1" id="main-container">
             <div class="d-flex flex-column ms-2 mb-3 me-5 w-50">
                 <div id="add-cred-container"
-                    class="container border mt-4 ms-3 p-2 d-flex flex-column justify-content-center">
+                    class="container border mt-4 ms-3 p-2 d-flex flex-column justify-content-center" style="background-color: #CDE5CE;">
                     <h3 class="text-center">Add Password</h3>
                     <div class="d-flex flex-column">
                         <div class="mb-3">
@@ -104,7 +104,7 @@
                     </div>
                 </div>
                 <div id="gen-pass-container"
-                    class="container border mt-4 ms-3 p-2 d-flex flex-column justify-content-center">
+                    class="container border mt-4 ms-3 p-2 d-flex flex-column justify-content-center" style="background-color: #CDE5CE;">
                     <h3 class="text-center">Generate Password</h3>
                     <div class="d-inline-flex flex-column">
                         <div class="mb-3 d-inline-flex">
@@ -138,7 +138,7 @@
                                 class="btn btn-primary align-self-center me-auto">Generate</button>
                         </div>
                         <div class="mb-1 border text-center d-flex mt-4">
-                            <span id="gen-pass-span" class="user-select-all" style="overflow: auto;"></span>
+                            <span id="gen-pass-span" class="user-select-all flex-grow-1 bg-white" style="overflow: auto;"></span>
                         </div>
                     </div>
                 </div>
@@ -247,7 +247,7 @@
                     </div>
                 </div>
             </div>
-            <div id="list-cred-container" class="container border mt-4 ms-3 me-3 mb-3 p-2 d-flex flex-column">
+            <div id="list-cred-container" class="container border mt-4 ms-3 me-3 mb-3 p-2 d-flex flex-column" style="background-color: #CDE5CE;">
                 <div>
                     <h3 class="text-center">View Passwords</h3>
                     <table id="creds-table" class="table table-responsive table-hover">
@@ -296,6 +296,18 @@
             </div>
         </div>
     </section>
+    <style>
+        .btn-primary{
+            --bs-btn-bg: #6D7A66;
+            --bs-btn-border-color: #6D7A66;
+            --bs-btn-hover-bg: #5D6957;
+            --bs-btn-hover-border-color: #5D6957;
+        }
+        .form-check-input:checked {
+            background-color: #5D6957;
+            border-color: #5D6957;
+        }
+    </style>
 </body>
 
 </html>
