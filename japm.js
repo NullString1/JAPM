@@ -104,6 +104,7 @@ class Credential {
     #last_modified_at;
     #url;
     #name;
+    #weak;
 
     constructor(username, password, url, name, created_at = new Date(), last_modified_at = new Date()) {
         this.#username = username;
@@ -112,6 +113,30 @@ class Credential {
         this.#name = name;
         this.#created_at = created_at;
         this.#last_modified_at = last_modified_at;
+        this.#weak = this.isWeak();
+    }
+
+    isWeak() {
+        if (this.#password.length < 8) {
+            return true;
+        }
+        if (this.#password.match(/[A-Z]/) == null) {
+            return true;
+        }
+        if (this.#password.match(/[a-z]/) == null) {
+            return true;
+        }
+        if (this.#password.match(/[0-9]/) == null) {
+            return true;
+        }
+        if (this.#password.match(/[!@#$%^&*()_\+\-=[\]{};':,.<>?]/) == null) {
+            return true;
+        }
+        return false;
+    }
+
+    getWeak() {
+        return this.#weak;
     }
 
     getPassword() {
@@ -125,6 +150,7 @@ class Credential {
     setPassword(password) {
         this.#password = password;
         this.#last_modified_at = new Date();
+        this.#weak = this.isWeak();
     }
 
     setUsername(username) {
@@ -533,6 +559,14 @@ class JAPM {
             rows[1].textContent = cred.getURL();
             rows[2].textContent = cred.getUsername();
             rows[3].textContent = "*".repeat(cred.getPassword().length);
+            if (cred.getWeak()) {
+                const i = document.createElement("i");
+                i.classList.add("bi", "bi-exclamation-triangle", "text-danger", "ms-1");
+                i.setAttribute("data-bs-toggle", "tooltip");
+                i.setAttribute("title", "Weak password");
+                new bootstrap.Tooltip(i);
+                rows[3].appendChild(i);
+            }
             rows[4].textContent = cred.getCreatedAt().toLocaleDateString("en-gb", {
                 weekday: "short",
                 year: '2-digit',
