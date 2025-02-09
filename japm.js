@@ -5,7 +5,7 @@ class User {
     #created_at;
     #generator_history = [];
 
-    constructor(username, password_hash = null, password = null) {
+    constructor(username, password_hash = null, password = null, credentials = [], generator_history = [], created_at = new Date()) {
         this.#username = username;
         if (password_hash == null && password != null) {
             this.setPassword(password);
@@ -14,7 +14,9 @@ class User {
         } else {
             throw new Error("Either password hash or password must be provided.");
         }
-        this.#created_at = new Date();
+        this.#created_at = created_at;
+        this.#credentials = credentials;
+        this.#generator_history = generator_history;
     }
 
     setPassword(password) {
@@ -103,13 +105,13 @@ class Credential {
     #url;
     #name;
 
-    constructor(username, password, url, name) {
+    constructor(username, password, url, name, created_at = new Date(), last_modified_at = new Date()) {
         this.#username = username;
         this.#password = password;
         this.#url = url;
         this.#name = name;
-        this.#created_at = new Date();
-        this.#last_modified_at = new Date();
+        this.#created_at = created_at;
+        this.#last_modified_at = last_modified_at;
     }
 
     getPassword() {
@@ -236,7 +238,7 @@ class Crypt {
                 decryptedData.password_hash = Crypt.toUint8Array(decryptedData.password_hash);
                 decryptedData.credentials = decryptedData.credentials.map(c => {
                     const cred = JSON.parse(c);
-                    return new Credential(cred.username, cred.password, cred.url, cred.name);
+                    return new Credential(cred.username, cred.password, cred.url, cred.name, new Date(cred.created_at), new Date(cred.last_modified_at));
                 });
                 return decryptedData;
             }).catch(() => {
@@ -332,8 +334,7 @@ class JAPM {
             reader.onload = () => {
                 const data = JSON.parse(reader.result);
                 Crypt.decryptBlob(data, password).then(data => {
-                    const user = new User(data.username, data.password_hash, null);
-                    user.setCredentials(data.credentials);
+                    const user = new User(data.username, data.password_hash, null, data.credentials, data.generator_history, data.created_at);
                     this.setUser(user);
                     if (this.#user.getUsername() != username) {
                         console.log("Invalid username");
@@ -377,7 +378,7 @@ class JAPM {
             if (pass.match(/[0-9]/) == null) {
                 $("#password-weak-num").addClass("text-danger").removeClass("text-success");
                 valid = false;
-            }else
+            } else
                 $("#password-weak-num").addClass("text-success").removeClass("text-danger");;
 
             if (pass.match(/[!@#$%^&*()_\+\-=[\]{};':,.<>?]/) == null) {
@@ -389,9 +390,9 @@ class JAPM {
             if (!valid) {
                 $("#password-weak").removeClass("d-none");
                 return;
-            }  else {
+            } else 
                 $("#password-weak").addClass("d-none");
-            }
+
             this.login($("#login-username").val(), pass);
         });
         $("#load-button").click(() => {
@@ -405,6 +406,9 @@ class JAPM {
             localStorage.removeItem("japm");
             $("#login-submit").text("Register");
             $("#reset-japm").addClass("d-none");
+            $("#login-error").addClass("d-none");
+            $("#login-username").val("");
+            $("#login-password").val("");
         });
         $(".input-group-text").click((e) => {
             const input = e.target.parentNode.previousElementSibling;
@@ -536,7 +540,7 @@ class JAPM {
                 day: '2-digit',
                 hour: "2-digit",
                 minute: "2-digit"
-              });
+            });
             rows[5].textContent = cred.getLastModAt().toLocaleDateString("en-gb", {
                 weekday: "short",
                 year: '2-digit',
@@ -544,7 +548,7 @@ class JAPM {
                 day: '2-digit',
                 hour: "2-digit",
                 minute: "2-digit"
-              });
+            });
             rows.forEach(td => {
                 tr.appendChild(td);
             });
@@ -623,9 +627,7 @@ class JAPM {
             return;
         }
         return Crypt.decryptBlob(JSON.parse(data), password).then(data => {
-            const user = new User(data.username, data.password_hash, null);
-            user.setCredentials(data.credentials);
-            user.setGeneratorHistory(data.generator_history);
+            const user = new User(data.username, data.password_hash, null, data.credentials, data.generator_history, data.created_at);
             this.setUser(user);
             if (this.#user.getUsername() != username) {
                 console.log("Invalid username");

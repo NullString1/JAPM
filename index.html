@@ -35,8 +35,7 @@
                 <div class="mb-3 input-group">
                     <label for="login-password" class="form-label w-100">Master Password:</label>
                     <input type="password" class="form-control rounded-start-2" id="login-password" name="password">
-                    <span class="input-group-text" id="edit-master-password-eye"><i
-                        class="bi bi-eye-fill"></i></span>
+                    <span class="input-group-text" id="edit-master-password-eye"><i class="bi bi-eye-fill"></i></span>
                 </div>
                 <div class="mb-3 d-flex">
                     <button id="reset-japm" class="btn btn-danger me-2 d-none" data-bs-toggle="modal"
@@ -90,7 +89,8 @@
         <div class="d-flex flex-row d-none flex-lg-grow-1" id="main-container">
             <div class="d-flex flex-column ms-2 mb-3 me-5 w-50">
                 <div id="add-cred-container"
-                    class="container border mt-4 ms-3 p-2 d-flex flex-column justify-content-center" style="background-color: #CDE5CE;">
+                    class="container border mt-4 ms-3 p-2 d-flex flex-column justify-content-center"
+                    style="background-color: #CDE5CE;">
                     <h3 class="text-center">Add Password</h3>
                     <div class="d-flex flex-column">
                         <div class="mb-3">
@@ -108,15 +108,15 @@
                         <div class="mb-3 input-group">
                             <label for="password" class="form-label w-100">Password</label>
                             <input type="password" class="form-control rounded-start-2" id="password" name="password">
-                            <span class="input-group-text" id="add-password-eye"><i
-                                class="bi bi-eye-fill"></i></span>
+                            <span class="input-group-text" id="add-password-eye"><i class="bi bi-eye-fill"></i></span>
                         </div>
                         <button id="add-cred-submit" type="submit"
                             class="btn btn-primary align-self-center">Add</button>
                     </div>
                 </div>
                 <div id="gen-pass-container"
-                    class="container border mt-4 ms-3 p-2 d-flex flex-column justify-content-center" style="background-color: #CDE5CE;">
+                    class="container border mt-4 ms-3 p-2 d-flex flex-column justify-content-center"
+                    style="background-color: #CDE5CE;">
                     <h3 class="text-center">Generate Password</h3>
                     <div class="d-inline-flex flex-column">
                         <div class="mb-3 d-inline-flex">
@@ -150,7 +150,8 @@
                                 class="btn btn-primary align-self-center me-auto">Generate</button>
                         </div>
                         <div class="mb-1 border text-center d-flex mt-4">
-                            <span id="gen-pass-span" class="user-select-all flex-grow-1 bg-white" style="overflow: auto;"></span>
+                            <span id="gen-pass-span" class="user-select-all flex-grow-1 bg-white"
+                                style="overflow: auto;"></span>
                         </div>
                     </div>
                 </div>
@@ -168,7 +169,8 @@
                                     <tr>
                                         <th class="align-content-center">Generated Password</th>
                                         <th class="align-content-center">Generated at</th>
-                                        <th><button id="clear-gen-pass-history" class="btn btn-danger bi bi-trash3-fill"></button></th>
+                                        <th><button id="clear-gen-pass-history"
+                                                class="btn btn-danger bi bi-trash3-fill"></button></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -214,7 +216,8 @@
                             </div>
                             <div class="mb-3 input-group">
                                 <label for="edit-cred-password" class="form-label w-100">Password</label>
-                                <input type="password" class="form-control rounded-start-2" id="edit-cred-password" name="site">
+                                <input type="password" class="form-control rounded-start-2" id="edit-cred-password"
+                                    name="site">
                                 <span class="input-group-text" id="edit-cred-password-eye"><i
                                         class="bi bi-eye-fill"></i></span>
                             </div>
@@ -238,19 +241,23 @@
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label for="view-cred-name" class="form-label">Site Name</label>
-                                <span type="text" class="form-control user-select-all" id="view-cred-name" name="site" data-bs-toggle="tooltip" data-bs-title="Click to copy"></span>
+                                <span type="text" class="form-control user-select-all" id="view-cred-name" name="site"
+                                    data-bs-toggle="tooltip" data-bs-title="Click to copy"></span>
                             </div>
                             <div class="mb-3">
                                 <label for="view-cred-url" class="form-label">Site URL</label>
-                                <span type="text" class="form-control user-select-all" id="view-cred-url" name="site" data-bs-toggle="tooltip" data-bs-title="Click to copy"></span>
+                                <span type="text" class="form-control user-select-all" id="view-cred-url" name="site"
+                                    data-bs-toggle="tooltip" data-bs-title="Click to copy"></span>
                             </div>
                             <div class="mb-3">
                                 <label for="view-cred-username" class="form-label">Username / Email</label>
-                                <span type="text" class="form-control user-select-all" id="view-cred-username" name="site" data-bs-toggle="tooltip" data-bs-title="Click to copy"></span>
+                                <span type="text" class="form-control user-select-all" id="view-cred-username"
+                                    name="site" data-bs-toggle="tooltip" data-bs-title="Click to copy"></span>
                             </div>
                             <div class="mb-3">
                                 <label for="view-cred-password" class="form-label">Password</label>
-                                <span type="text" class="form-control user-select-all" id="view-cred-password" name="site" data-bs-toggle="tooltip" data-bs-title="Click to copy"></span>
+                                <span type="text" class="form-control user-select-all" id="view-cred-password"
+                                    name="site" data-bs-toggle="tooltip" data-bs-title="Click to copy"></span>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -259,7 +266,8 @@
                     </div>
                 </div>
             </div>
-            <div id="list-cred-container" class="container border mt-4 ms-3 me-3 mb-3 p-2 d-flex flex-column" style="background-color: #CDE5CE;">
+            <div id="list-cred-container" class="container border mt-4 ms-3 me-3 mb-3 p-2 d-flex flex-column"
+                style="background-color: #CDE5CE;">
                 <div>
                     <h3 class="text-center">View Passwords</h3>
                     <table id="creds-table" class="table table-responsive table-hover">
@@ -309,12 +317,13 @@
         </div>
     </section>
     <style>
-        .btn-primary{
+        .btn-primary {
             --bs-btn-bg: #6D7A66;
             --bs-btn-border-color: #6D7A66;
             --bs-btn-hover-bg: #5D6957;
             --bs-btn-hover-border-color: #5D6957;
         }
+
         .form-check-input:checked {
             background-color: #5D6957;
             border-color: #5D6957;
