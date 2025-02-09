@@ -528,7 +528,7 @@ class JAPM {
             rows[0].textContent = cred.getName();
             rows[1].textContent = cred.getURL();
             rows[2].textContent = cred.getUsername();
-            rows[3].textContent = cred.getPassword();
+            rows[3].textContent = "*".repeat(cred.getPassword().length);
             rows[4].textContent = cred.getCreatedAt().toLocaleDateString("en-gb", {
                 weekday: "short",
                 year: '2-digit',
