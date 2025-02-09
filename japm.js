@@ -555,10 +555,25 @@ class JAPM {
             for (let i = 0; i < 6; i++) {
                 rows.push(document.createElement("td"));
             }
-            rows[0].textContent = cred.getName();
-            rows[1].textContent = cred.getURL();
-            rows[2].textContent = cred.getUsername();
-            rows[3].textContent = "*".repeat(cred.getPassword().length);
+            rows[0].textContent = cred.getName().length > 20 ? cred.getName().substring(0, 20) + "..." : cred.getName();
+            rows[1].textContent = cred.getURL().length > 20 ? cred.getURL().substring(0, 20) + "..." : cred.getURL();
+            try {
+                const url = new URL(cred.getURL().includes("://") ? cred.getURL() : "https://" + cred.getURL());
+                const i = document.createElement("i");
+                i.classList.add("bi", "bi-box-arrow-up-right", "ms-1");
+                i.setAttribute("data-bs-toggle", "tooltip");
+                i.setAttribute("title", "Open in new tab");
+                i.style.cursor = "pointer";
+                i.addEventListener("click", () => {
+                    window.open(url.href, "_blank");
+                });
+                new bootstrap.Tooltip(i);
+                rows[1].appendChild(i);
+            } catch (e) {
+                console.debug("Invalid URL");
+            }
+            rows[2].textContent = cred.getUsername().length > 20 ? cred.getUsername().substring(0, 20) + "..." : cred.getUsername();
+            rows[3].textContent = "*".repeat(cred.getPassword().length > 15 ? 15 : cred.getPassword().length);
             if (cred.getWeak()) {
                 const i = document.createElement("i");
                 i.classList.add("bi", "bi-exclamation-triangle", "text-danger", "ms-1");
