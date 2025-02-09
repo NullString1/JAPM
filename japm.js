@@ -406,6 +406,10 @@ class JAPM {
             $("#login-submit").text("Register");
             $("#reset-japm").addClass("d-none");
         });
+        $(".input-group-text").click((e) => {
+            const input = e.target.parentNode.previousElementSibling;
+            input.setAttribute("type", input.getAttribute("type") === "password" ? "text" : "password")
+        })
         if (localStorage.getItem("japm") != null) {
             $("#login-submit").text("Login");
             $("#reset-japm").removeClass("d-none");
@@ -504,10 +508,6 @@ class JAPM {
                 this.saveDataLS();
             });
             modal.show();
-        });
-        $("#edit-cred-password-eye").click(() => {
-            const input = $("#edit-cred-password");
-            input.attr("type", input.attr("type") === "password" ? "text" : "password");
         });
         $('[data-bs-toggle="tooltip"]').tooltip();
     }
