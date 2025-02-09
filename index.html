@@ -29,11 +29,11 @@
             <div class="flex-column d-flex">
                 <h3 class="text-center">Login</h3>
                 <div class="mb-3">
-                    <label for="username" class="form-label">Username:</label>
+                    <label for="login-username" class="form-label">Username:</label>
                     <input type="text" class="form-control" id="login-username" name="username">
                 </div>
                 <div class="mb-3">
-                    <label for="password" class="form-label">Master Password:</label>
+                    <label for="login-password" class="form-label">Master Password:</label>
                     <input type="password" class="form-control" id="login-password" name="password">
                 </div>
                 <div class="mb-3 d-flex">
@@ -43,6 +43,14 @@
                         class="btn btn-primary flex-grow-1 align-self-center">Register</button>
                 </div>
                 <span id="login-error" class="text-danger d-none">Incorrect username or password</span>
+                <span id="password-weak" class="text-danger d-none">Password is too weak:
+                    <li id="password-weak-length">Must be at least 8 characters long</li>
+                    <li id="password-weak-upper">Must contain at least one uppercase letter</li>
+                    <li id="password-weak-lower">Must contain at least one lowercase letter</li>
+                    <li id="password-weak-num">Must contain at least one number</li>
+                    <li id="password-weak-symb">Must contain at least one symbol</li>
+                </span>
+
             </div>
             <div id="reset-modal" class="modal" tabindex="-1">
                 <div class="modal-dialog">
@@ -108,27 +116,27 @@
                     <h3 class="text-center">Generate Password</h3>
                     <div class="d-inline-flex flex-column">
                         <div class="mb-3 d-inline-flex">
-                            <label for="length" class="form-label align-content-end">Length</label>
+                            <label for="gen-pass-length" class="form-label align-content-end">Length</label>
                             <input type="number" class="form-control ms-2" id="gen-pass-length" name="length" value="10"
                                 max="70" min="5">
                         </div>
                         <div class="mb-3 d-inline-flex justify-content-between">
-                            <label for="uppercase" class="form-label">Uppercase characters</label>
+                            <label for="gen-pass-uppercase" class="form-label">Uppercase characters</label>
                             <input type="checkbox" class="form-check-input ms-2" id="gen-pass-uppercase"
                                 name="uppercase" checked>
                         </div>
                         <div class="mb-3 d-inline-flex justify-content-between">
-                            <label for="lowercase" class="form-label">Lowercase characters</label>
+                            <label for="gen-pass-lowercase" class="form-label">Lowercase characters</label>
                             <input type="checkbox" class="form-check-input ms-2" id="gen-pass-lowercase"
                                 name="lowercase" checked>
                         </div>
                         <div class="mb-3 d-inline-flex justify-content-between">
-                            <label for="numbers" class="form-label">Numbers (0-9)</label>
+                            <label for="gen-pass-numbers" class="form-label">Numbers (0-9)</label>
                             <input type="checkbox" class="form-check-input ms-2" id="gen-pass-numbers" name="numbers"
                                 checked>
                         </div>
                         <div class="mb-3 d-inline-flex justify-content-between">
-                            <label for="symbols" class="form-label">Symbols (?-+=/...)</label>
+                            <label for="gen-pass-symbols" class="form-label">Symbols (?-+=/...)</label>
                             <input type="checkbox" class="form-check-input ms-2" id="gen-pass-symbols" name="symbols"
                                 checked>
                         </div>
