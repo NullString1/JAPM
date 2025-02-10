@@ -86,10 +86,10 @@
                 </div>
             </div>
         </div>
-        <div class="d-flex flex-row d-none flex-lg-grow-1" id="main-container">
-            <div class="d-flex flex-column ms-2 mb-3 me-5 w-50">
+        <div class="d-flex flex-row d-none" id="main-container">
+            <div class="container-fluid d-flex flex-column ms-3 mb-3 me-5 mt-4" style="flex-basis: 30%;">
                 <div id="add-cred-container"
-                    class="container border mt-4 ms-3 p-2 d-flex flex-column justify-content-center"
+                    class="border p-2 d-flex flex-column justify-content-center"
                     style="background-color: #CDE5CE;">
                     <h3 class="text-center">Add Password</h3>
                     <div class="d-flex flex-column">
@@ -115,7 +115,7 @@
                     </div>
                 </div>
                 <div id="gen-pass-container"
-                    class="container border mt-4 ms-3 p-2 d-flex flex-column justify-content-center"
+                    class="border mt-2 p-2 d-flex flex-column justify-content-center"
                     style="background-color: #CDE5CE;">
                     <h3 class="text-center">Generate Password</h3>
                     <div class="d-inline-flex flex-column">
@@ -266,6 +266,24 @@
                     </div>
                 </div>
             </div>
+            <div id="delete-cred-modal" class="modal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Delete password</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to delete this password?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button id="delete-cred-button" type="button" class="btn btn-danger"
+                                data-bs-dismiss="modal">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div id="list-cred-container" class="container border mt-4 ms-3 me-3 mb-3 p-2 d-flex flex-column"
                 style="background-color: #CDE5CE;">
                 <div class="table-responsive">
@@ -322,12 +340,37 @@
             --bs-btn-border-color: #6D7A66;
             --bs-btn-hover-bg: #5D6957;
             --bs-btn-hover-border-color: #5D6957;
+            --bs-btn-active-bg: #5D6957;
+            --bs-btn-active-border-color: #5D6957;
+        }
+
+        .btn-danger {
+            --bs-btn-bg: #695768;
+            --bs-btn-border-color: #695768;
+            --bs-btn-hover-bg: #5D4F57;
+            --bs-btn-hover-border-color: #5D4F57;
+            --bs-btn-active-bg: #5D4F57;
+            --bs-btn-active-border-color: #5D4F57;
         }
 
         .form-check-input:checked {
             background-color: #5D6957;
             border-color: #5D6957;
         }
+
+
+        @media (max-width: 768px) {
+            #main-container {
+                flex-direction: column !important; /* Stack items vertically on smaller screens */
+            }
+            .container-fluid {
+                flex-basis: auto !important; /* Allow containers to take full width */
+                margin-left: 0.5rem !important; /* Reduce left margin */
+                margin-right: 0.5rem !important; /* Reduce right margin */
+                margin-top: 0.5rem !important;
+            }
+        }
+
     </style>
 </body>
 

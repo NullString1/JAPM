@@ -380,7 +380,7 @@ class JAPM {
     }
 
     setupLogin() {
-        $("#login-submit").click(() => {
+        $("#login-submit").off("click").on("click", () => {
             const pass = $("#login-password").val();
             let valid = true;
             if (pass.length < 8) {
@@ -421,14 +421,14 @@ class JAPM {
 
             this.login($("#login-username").val(), pass);
         });
-        $("#load-button").click(() => {
-            $("#load-input").click();
+        $("#load-button").off("click").on("click", () => {
+            $("#load-input").off("click").on("click", );
         });
         $("#load-input").change(() => {
             $("#login-submit").text("Login");
             bootstrap.Toast.getOrCreateInstance($("#data-loaded-toast")[0]).show();
         });
-        $("#reset-data-button").click(() => {
+        $("#reset-data-button").off("click").on("click", () => {
             localStorage.removeItem("japm");
             $("#login-submit").text("Register");
             $("#reset-japm").addClass("d-none");
@@ -436,7 +436,7 @@ class JAPM {
             $("#login-username").val("");
             $("#login-password").val("");
         });
-        $(".input-group-text").click((e) => {
+        $(".input-group-text").off("click").on("click", (e) => {
             const input = e.target.parentNode.previousElementSibling;
             input.setAttribute("type", input.getAttribute("type") === "password" ? "text" : "password")
         })
@@ -448,7 +448,7 @@ class JAPM {
     }
 
     setupMainView() {
-        $("#add-cred-submit").click(() => {
+        $("#add-cred-submit").off("click").on("click", () => {
             const name = $("#name").val();
             const site = $("#site").val();
             const username = $("#username").val();
@@ -463,16 +463,16 @@ class JAPM {
                 password
             );
         });
-        $("#save-button").click(() => {
+        $("#save-button").off("click").on("click", () => {
             this.exportData();
         });
-        $("#logout-button").click(() => {
+        $("#logout-button").off("click").on("click", () => {
             this.#user = undefined;
             this.updateState(JAPM.State.UNAUTHENTICATED);
             $("#login-username").val("");
             $("#login-password").val("");
         });
-        $("#gen-pass-submit").click(() => {
+        $("#gen-pass-submit").off("click").on("click", () => {
             const length = parseInt($("#gen-pass-length").val());
             if (length < 5) {
                 return;
@@ -500,12 +500,12 @@ class JAPM {
             $("#gen-pass-span").text(PasswordGenerator.generate(length, charset, this.#user));
             this.saveDataLS();
         });
-        $("#gen-pass-span").click(() => {
+        $("#gen-pass-span").off("click").on("click", () => {
             navigator.clipboard.writeText($("#gen-pass-span").text()).then(() => {
                 bootstrap.Toast.getOrCreateInstance($("#password-copied-toast")[0]).show();
             });
         });
-        $("#gen-pass-history").click(() => {
+        $("#gen-pass-history").off("click").on("click", () => {
             const modal = new bootstrap.Modal($("#gen-pass-history-modal")[0]);
             const table = $("#gen-pass-history-table tbody");
             table.empty();
@@ -532,7 +532,7 @@ class JAPM {
                 tr.appendChild(delButton);
                 table.append(tr);
             });
-            $("#clear-gen-pass-history").click(() => {
+            $("#clear-gen-pass-history").off("click").on("click", () => {
                 this.#user.setGeneratorHistory([]);
                 $("#gen-pass-history-table tbody").empty();
                 this.saveDataLS();
@@ -608,7 +608,7 @@ class JAPM {
                 $("#view-cred-url").text(cred.getURL());
                 $("#view-cred-username").text(cred.getUsername());
                 $("#view-cred-password").text(cred.getPassword());
-                $("#view-cred-modal span").click((e) => {
+                $("#view-cred-modal span").off("click").on("click", (e) => {
                     navigator.clipboard.writeText(e.target.textContent);
                 });
                 modal.show();
@@ -617,9 +617,14 @@ class JAPM {
             const delButton = document.createElement("button");
             delButton.classList.add("btn", "btn-danger", "bi", "bi-trash3-fill", "mt-1", "ms-1");
             delButton.addEventListener("click", (e) => {
-                this.#user.removeCredential(cred);
-                this.buildCredsTable();
-                this.saveDataLS();
+                const modal = new bootstrap.Modal($("#delete-cred-modal")[0]);
+                modal.show();
+                $("#delete-cred-button").off("click").on("click", () => {
+                    this.#user.removeCredential(cred);
+                    this.buildCredsTable();
+                    this.saveDataLS();
+                    modal.hide();
+                });
                 e.stopPropagation();
             });
             tr.appendChild(delButton);
@@ -632,7 +637,7 @@ class JAPM {
                 $("#edit-cred-url").val(cred.getURL());
                 $("#edit-cred-username").val(cred.getUsername());
                 $("#edit-cred-password").val(cred.getPassword());
-                $("#edit-cred-save").click(() => {
+                $("#edit-cred-save").off("click").on("click", () => {
                     cred.setName($("#edit-cred-name").val());
                     cred.setURL($("#edit-cred-url").val());
                     cred.setUsername($("#edit-cred-username").val());
