@@ -17,8 +17,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="japm.js"></script>
     <section class="d-flex flex-row justify-content-center">
-        <div id="login-container" class="container border mt-5 p-2 w-25 align-self-center"
-            style="flex-basis: fit-content;">
+        <div id="login-container" class="container border mt-5 p-2 w-25 align-self-center">
             <div>
                 <h1 class="text-center pb-4">Just Another Password Manager</h1>
             </div>
@@ -73,7 +72,7 @@
                     </div>
                 </div>
             </div>
-            <div class="toast-container position-fixed translate-middle start-50 p-2" style="top:30%">
+            <div class="toast-container position-fixed translate-middle start-50 p-2 top-30">
                 <div id="data-loaded-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
                     data-bs-delay="1000">
                     <div class="toast-header">
@@ -87,10 +86,9 @@
             </div>
         </div>
         <div class="d-flex flex-row d-none" id="main-container">
-            <div class="container-fluid d-flex flex-column ms-3 mb-3 me-5 mt-4" style="flex-basis: 30%;">
+            <div class="container-fluid d-flex flex-column ms-3 mb-3 me-5 mt-4 fb-30">
                 <div id="add-cred-container"
-                    class="border p-2 d-flex flex-column justify-content-center"
-                    style="background-color: #CDE5CE;">
+                    class="border p-2 d-flex flex-column justify-content-center">
                     <h3 class="text-center">Add Password</h3>
                     <div class="d-flex flex-column">
                         <div class="mb-3">
@@ -115,8 +113,7 @@
                     </div>
                 </div>
                 <div id="gen-pass-container"
-                    class="border mt-2 p-2 d-flex flex-column justify-content-center"
-                    style="background-color: #CDE5CE;">
+                    class="border mt-2 p-2 d-flex flex-column justify-content-center">
                     <h3 class="text-center">Generate Password</h3>
                     <div class="d-inline-flex flex-column">
                         <div class="mb-3 d-inline-flex">
@@ -150,8 +147,7 @@
                                 class="btn btn-primary align-self-center me-auto">Generate</button>
                         </div>
                         <div class="mb-1 border text-center d-flex mt-4">
-                            <span id="gen-pass-span" class="user-select-all flex-grow-1 bg-white"
-                                style="overflow: auto;"></span>
+                            <span id="gen-pass-span" class="user-select-all flex-grow-1 bg-white overflow-auto"></span>
                         </div>
                     </div>
                 </div>
@@ -185,7 +181,7 @@
                 </div>
             </div>
 
-            <div class="toast-container position-fixed translate-middle start-50 p-2" style="top:50%">
+            <div class="toast-container position-fixed translate-middle start-50 p-2 top-50">
                 <div id="password-copied-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
                     data-bs-delay="1500">
                     <div class="toast-header">
@@ -284,8 +280,7 @@
                     </div>
                 </div>
             </div>
-            <div id="list-cred-container" class="container border mt-4 ms-3 me-3 mb-3 p-2 d-flex flex-column"
-                style="background-color: #CDE5CE;">
+            <div id="list-cred-container" class="container border mt-4 ms-3 me-3 mb-3 p-2 d-flex flex-column">
                 <div class="table-responsive">
                     <h3 class="text-center">View Passwords</h3>
                     <table id="creds-table" class="table table-hover">
@@ -335,6 +330,14 @@
         </div>
     </section>
     <style>
+        .top-30 {
+            top: 30%;
+        }
+
+        .fb-30 {
+            flex-basis: 30%;
+        }
+
         .btn-primary {
             --bs-btn-bg: #6D7A66;
             --bs-btn-border-color: #6D7A66;
@@ -358,6 +361,17 @@
             border-color: #5D6957;
         }
 
+        #login-container {
+            flex-basis: fit-content;
+        }
+
+        #add-cred-container, #gen-pass-container, #list-cred-container, #login-container {
+            background-color: #CDE5CE;
+        }
+
+        body {
+            background-color: darkseagreen;
+        }
 
         @media (max-width: 768px) {
             #main-container {
