@@ -300,6 +300,7 @@ class JAPM {
     #fileHandler;
     /** @type {JAPM.State} */
     state;
+    #autoLogoutTimer;
 
     static State = {
         UNAUTHENTICATED: "unauthenticated",
@@ -328,12 +329,14 @@ class JAPM {
                     $("#login-submit").text("Login");
                     $("#reset-japm").removeClass("d-none");
                 }
+                clearTimeout(this.#autoLogoutTimer);
                 break;
             case JAPM.State.AUTHENTICATED:
                 window.history.pushState({}, "", "#/main"); // Change URL to /main 
                 $("#login-container").addClass("d-none");
                 $("#main-container").removeClass("d-none");
                 this.buildCredsTable();
+                this.autoLogout();
                 break;
         }
 
@@ -377,6 +380,15 @@ class JAPM {
             };
             reader.readAsText(file);
         };
+    }
+
+    autoLogout() {
+        setTimeout(() => {
+            this.#user = undefined;
+            this.updateState(JAPM.State.UNAUTHENTICATED);
+            $("#login-username").val("");
+            $("#login-password").val("");
+        }, 5*60*1000);
     }
 
     setupLogin() {
