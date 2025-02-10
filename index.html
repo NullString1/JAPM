@@ -17,7 +17,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="japm.js"></script>
     <section class="d-flex flex-row justify-content-center">
-        <div id="login-container" class="container border mt-5 p-2 w-25 align-self-center">
+        <div id="login-container" class="container border mt-5 p-2 w-25 align-self-center rounded-3">
             <div>
                 <h1 class="text-center pb-4">Just Another Password Manager</h1>
             </div>
@@ -88,7 +88,7 @@
         <div class="d-flex flex-row d-none" id="main-container">
             <div class="container-fluid d-flex flex-column ms-3 mb-3 me-5 mt-4 fb-30">
                 <div id="add-cred-container"
-                    class="border p-2 d-flex flex-column justify-content-center">
+                    class="border p-2 d-flex flex-column justify-content-center rounded-3">
                     <h3 class="text-center">Add Password</h3>
                     <div class="d-flex flex-column">
                         <div class="mb-3">
@@ -113,7 +113,7 @@
                     </div>
                 </div>
                 <div id="gen-pass-container"
-                    class="border mt-2 p-2 d-flex flex-column justify-content-center">
+                    class="border mt-2 p-2 d-flex flex-column justify-content-center rounded-3">
                     <h3 class="text-center">Generate Password</h3>
                     <div class="d-inline-flex flex-column">
                         <div class="mb-3 d-inline-flex">
@@ -280,7 +280,7 @@
                     </div>
                 </div>
             </div>
-            <div id="list-cred-container" class="container border mt-4 ms-3 me-3 mb-3 p-2 d-flex flex-column">
+            <div id="list-cred-container" class="container border mt-4 ms-3 me-3 mb-3 p-2 d-flex flex-column rounded-3">
                 <div class="table-responsive">
                     <h3 class="text-center">View Passwords</h3>
                     <table id="creds-table" class="table table-hover">
@@ -367,10 +367,6 @@
 
         #add-cred-container, #gen-pass-container, #list-cred-container, #login-container {
             background-color: #CDE5CE;
-        }
-
-        body {
-            background-color: darkseagreen;
         }
 
         @media (max-width: 768px) {
