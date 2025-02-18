@@ -437,7 +437,7 @@ class JAPM {
             this.login(username, pass);
         });
         $("#load-button").off("click").on("click", () => {
-            $("#load-input").off("click").on("click",);
+            $("#load-input").trigger("click");
         });
         $("#load-input").change(() => {
             $("#login-submit").text("Login");
