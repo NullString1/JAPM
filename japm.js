@@ -443,6 +443,12 @@ class JAPM {
             $("#login-submit").text("Login");
             bootstrap.Toast.getOrCreateInstance($("#data-loaded-toast")[0]).show();
         });
+        $("#login-password").off("keypress").on("keypress", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                $("#login-submit").trigger("click");
+            }
+        });
         $("#reset-data-button").off("click").on("click", () => {
             localStorage.removeItem("japm");
             $("#login-submit").text("Register");
@@ -478,6 +484,12 @@ class JAPM {
                 password
             );
         });
+        $("#password").off("keypress").on("keypress", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                $("#add-cred-submit").trigger("click");
+            }
+        });
         $("#save-button").off("click").on("click", () => {
             this.exportData();
         });
@@ -489,7 +501,7 @@ class JAPM {
         });
         $("#gen-pass-submit").off("click").on("click", () => {
             const length = parseInt($("#gen-pass-length").val());
-            if (length < 5) {
+            if (length < 5 || length > 70) {
                 return;
             }
             const uppercase = $("#gen-pass-uppercase").is(":checked");
@@ -649,6 +661,7 @@ class JAPM {
 
             const delButton = document.createElement("button");
             delButton.classList.add("btn", "btn-danger", "bi", "bi-trash3-fill", "mt-1", "ms-1");
+            delButton.setAttribute("aria-label", "Delete credential");
             delButton.addEventListener("click", (e) => {
                 const modal = new bootstrap.Modal($("#delete-cred-modal")[0]);
                 modal.show();
@@ -664,6 +677,7 @@ class JAPM {
 
             const editButton = document.createElement("button");
             editButton.classList.add("btn", "btn-info", "bi", "bi-pencil-square", "mt-1", "ms-1");
+            editButton.setAttribute("aria-label", "Edit credential");
             editButton.addEventListener("click", (e) => {
                 const modal = new bootstrap.Modal($("#edit-cred-modal")[0]);
                 $("#edit-cred-name").val(cred.getName());
