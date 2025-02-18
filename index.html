@@ -41,6 +41,7 @@
                         data-bs-target="#reset-modal" tabindex="0">RESET</button>
                     <button id="login-submit" type="submit"
                         class="btn btn-primary flex-grow-1 align-self-center" tabindex="3">Register</button>
+                    <i id="dyslexic-toggle" class="bi bi-universal-access-circle btn btn-primary ms-2" aria-label="Toggle dyslexic font" data-bs-toggle="tooltip" data-bs-title="Toggle OpenDyslexic font"></i>
                 </div>
                 <span id="login-error" class="text-danger d-none">Incorrect username or password</span>
                 <span id="password-weak" class="text-danger d-none">Password is too weak:
@@ -330,6 +331,31 @@
         </div>
     </section>
     <style>
+        @font-face {
+            font-family: 'Open Dyslexic';
+            src: url("OpenDyslexic/OpenDyslexic-Regular.otf");
+        }
+        @font-face {
+            font-family: 'Open Dyslexic';
+            font-weight: bold;
+            src: url("OpenDyslexic/OpenDyslexic-Bold.otf");
+        }
+        @font-face {
+            font-family: 'Open Dyslexic';
+            font-style: italic;
+            src: url("OpenDyslexic/OpenDyslexic-Italic.otf");
+        }
+        @font-face {
+            font-family: 'Open Dyslexic';
+            font-weight: bold;
+            font-style: italic;
+            src: url("OpenDyslexic/OpenDyslexic-BoldItalic.otf");
+        }
+
+        .dyslexic {
+            --bs-body-font-family: 'Open Dyslexic', sans-serif;
+        }
+
         .top-30 {
             top: 30%;
         }

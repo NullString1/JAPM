@@ -461,6 +461,9 @@ class JAPM {
             const input = e.target.parentNode.previousElementSibling;
             input.setAttribute("type", input.getAttribute("type") === "password" ? "text" : "password")
         })
+        $("#dyslexic-toggle").off("click").on("click", () => {
+            $("body").toggleClass("dyslexic");
+        });
         if (localStorage.getItem("japm") != null) {
             $("#login-submit").text("Login");
             $("#reset-japm").removeClass("d-none");
