@@ -428,7 +428,11 @@ class JAPM {
             } else 
                 $("#password-weak").addClass("d-none");
 
-            this.login($("#login-username").val(), pass);
+            const username = $("#login-username").val();
+            if (username === "") {
+                return;
+            }
+            this.login(username, pass);
         });
         $("#load-button").off("click").on("click", () => {
             $("#load-input").off("click").on("click", );
