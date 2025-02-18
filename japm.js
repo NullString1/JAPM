@@ -385,57 +385,59 @@ class JAPM {
             this.updateState(JAPM.State.UNAUTHENTICATED);
             $("#login-username").val("");
             $("#login-password").val("");
-        }, 5*60*1000);
+        }, 5 * 60 * 1000);
     }
 
     setupLogin() {
         $("#login-submit").off("click").on("click", () => {
             const pass = $("#login-password").val();
-            let valid = true;
-            if (pass.length < 8) {
-                $("#password-weak-length").addClass("text-danger").removeClass("text-success");
-                valid = false;
-            } else
-                $("#password-weak-length").addClass("text-success").removeClass("text-danger");
+            if ($("#login-submit").text() === "Register") {
+                let valid = true;
+                if (pass.length < 8) {
+                    $("#password-weak-length").addClass("text-danger").removeClass("text-success");
+                    valid = false;
+                } else
+                    $("#password-weak-length").addClass("text-success").removeClass("text-danger");
 
-            if (pass.match(/[A-Z]/) == null) {
-                $("#password-weak-upper").addClass("text-danger").removeClass("text-success");
-                valid = false;
-            } else
-                $("#password-weak-upper").addClass("text-success").removeClass("text-danger");
+                if (pass.match(/[A-Z]/) == null) {
+                    $("#password-weak-upper").addClass("text-danger").removeClass("text-success");
+                    valid = false;
+                } else
+                    $("#password-weak-upper").addClass("text-success").removeClass("text-danger");
 
-            if (pass.match(/[a-z]/) == null) {
-                $("#password-weak-lower").addClass("text-danger").removeClass("text-success");
-                valid = false;
-            } else
-                $("#password-weak-lower").addClass("text-success").removeClass("text-danger");;
+                if (pass.match(/[a-z]/) == null) {
+                    $("#password-weak-lower").addClass("text-danger").removeClass("text-success");
+                    valid = false;
+                } else
+                    $("#password-weak-lower").addClass("text-success").removeClass("text-danger");;
 
-            if (pass.match(/[0-9]/) == null) {
-                $("#password-weak-num").addClass("text-danger").removeClass("text-success");
-                valid = false;
-            } else
-                $("#password-weak-num").addClass("text-success").removeClass("text-danger");;
+                if (pass.match(/[0-9]/) == null) {
+                    $("#password-weak-num").addClass("text-danger").removeClass("text-success");
+                    valid = false;
+                } else
+                    $("#password-weak-num").addClass("text-success").removeClass("text-danger");;
 
-            if (pass.match(/[!@#$%^&*()_\+\-=[\]{};':,.<>?]/) == null) {
-                $("#password-weak-symb").addClass("text-danger").removeClass("text-success");
-                valid = false;
-            } else
-                $("#password-weak-symb").addClass("text-success").removeClass("text-danger");;
+                if (pass.match(/[!@#$%^&*()_\+\-=[\]{};':,.<>?]/) == null) {
+                    $("#password-weak-symb").addClass("text-danger").removeClass("text-success");
+                    valid = false;
+                } else
+                    $("#password-weak-symb").addClass("text-success").removeClass("text-danger");;
 
-            if (!valid) {
-                $("#password-weak").removeClass("d-none");
-                return;
-            } else 
-                $("#password-weak").addClass("d-none");
-
+                if (!valid) {
+                    $("#password-weak").removeClass("d-none");
+                    return;
+                } else
+                    $("#password-weak").addClass("d-none");
+            }
             const username = $("#login-username").val();
             if (username === "") {
+                $("#login-error").removeClass("d-none");
                 return;
             }
             this.login(username, pass);
         });
         $("#load-button").off("click").on("click", () => {
-            $("#load-input").off("click").on("click", );
+            $("#load-input").off("click").on("click",);
         });
         $("#load-input").change(() => {
             $("#login-submit").text("Login");
