@@ -197,9 +197,6 @@ class Credential {
 }
 
 class FileHandler {
-    loadFromFile(file) {
-    }
-
     writeToFile(data) {
         const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
@@ -521,10 +518,28 @@ class JAPM {
             const modal = new bootstrap.Modal($("#gen-pass-history-modal")[0]);
             const table = $("#gen-pass-history-table tbody");
             table.empty();
-            this.#user.getGeneratorHistory().reverse().forEach(item => {
+            this.#user.getGeneratorHistory().forEach(item => {
                 const tr = document.createElement("tr");
                 const date = document.createElement("td");
-                date.textContent = item.date.toGMTString();
+                try {
+                    date.textContent = item.date.toLocaleDateString("en-gb", {
+                        weekday: "short",
+                        year: '2-digit',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    });
+                } catch (e) {
+                    date.textContent = new Date(item.date).toLocaleDateString("en-gb", {
+                        weekday: "short",
+                        year: '2-digit',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    });
+                }
                 const password = document.createElement("td");
                 password.classList.add("user-select-all");
                 password.textContent = item.password;
@@ -542,7 +557,7 @@ class JAPM {
                 tr.appendChild(date);
                 tr.appendChild(password);
                 tr.appendChild(delButton);
-                table.append(tr);
+                table.prepend(tr);
             });
             $("#clear-gen-pass-history").off("click").on("click", () => {
                 this.#user.setGeneratorHistory([]);
