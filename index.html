@@ -73,6 +73,33 @@
                     </div>
                 </div>
             </div>
+            <div id="gdpr-modal" class="modal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">GDPR Compliance</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>By using this application you agree to the following:
+                                <ul>
+                                    <li>Your data is always stored locally, in your browser's local storage or downloaded in JSON format by you.</li>
+                                    <li>Your data is never shared with any third party and never leaves your device.</li>
+                                    <li>Your data is never stored on any external servers.</li>
+                                    <li>Your data is always encrypted before being stored on your device.</li>
+                                    <li>Your data is only decrypted when you enter your master password.</li>
+                                    <li>Your data is only decrypted in your browser and never leaves your device.</li>
+                                    <li>Your data is correctable and deleteable by you, from within the application.</li>
+                                    <li>Your data undergoes no automated proccessing by any 3rd parties.</li>
+                                </ul>
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="toast-container position-fixed translate-middle start-50 p-2 top-30">
                 <div id="data-loaded-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
                     data-bs-delay="1000">
@@ -329,6 +356,13 @@
                 <button id="logout-button" class="btn btn-danger mt-2 w-100">Logout</button>
             </div>
         </div>
+    </section>
+    <section class="d-flex">
+        <footer class="d-flex justify-content-center w-100 mt-5">
+            <a id="gdpr-span" class="link-dark" data-bs-toggle="modal" data-bs-target="#gdpr-modal">GDPR
+                Compliance</a>
+                <span class="text-muted"> | Daniel Kern 2025 </span>
+        </footer>
     </section>
     <style>
         @font-face {
