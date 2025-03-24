@@ -429,7 +429,7 @@ class JAPM {
             }
         });
         $("#login-username").off("keyup").on("keyup", (e) => {
-            if (JSON.parse(localStorage.getItem("japm")).hasOwnProperty($("#login-username").val())) {
+            if (JSON.parse(localStorage.getItem("japm") || "{}").hasOwnProperty($("#login-username").val())) {
                 $("#login-submit").text("Login");
             } else {
                 $("#login-submit").text("Register");
