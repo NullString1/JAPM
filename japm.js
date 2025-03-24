@@ -340,43 +340,7 @@ class JAPM {
     };
 
     login(username, password) {
-        const fileinput = $("#load-input")[0];
-        if (fileinput.files.length === 0) { // Fresh start or local storage
-            if (localStorage.getItem("japm") == null) { // Complete fresh start
-                this.#user = new User(username, null, password);
-                const sInterval = setInterval(() => {
-                    if (this.#user.getPasswordHash() != null) {
-                        clearInterval(sInterval);
-                        this.saveDataLS();
-                    }
-                }, 100);
-                this.updateState(JAPM.State.AUTHENTICATED);
-                return;
-            }
-            this.loadDataLS(username, password);
-        } else { // Data loaded from backuo json file
-            const file = fileinput.files[0];
-            const reader = new FileReader();
-            reader.onload = () => {
-                const data = JSON.parse(reader.result);
-                Crypt.decryptBlob(data, password).then(data => {
-                    const user = new User(data.username, data.password_hash, null, data.credentials, data.generator_history, data.created_at);
-                    this.setUser(user);
-                    if (this.#user.getUsername() != username) {
-                        console.log("Invalid username");
-                        $("#login-error").removeClass("d-none");
-                        return;
-                    }
-                    this.saveDataLS();
-                    this.updateState(JAPM.State.AUTHENTICATED);
-                }).catch((e) => {
-                    console.error(e);
-                    console.error("Invalid password");
-                    $("#login-error").removeClass("d-none");
-                });
-            };
-            reader.readAsText(file);
-        };
+        this.loadDataLS(username, password);
     }
 
     autoLogout() {
@@ -440,7 +404,23 @@ class JAPM {
             $("#load-input").trigger("click");
         });
         $("#load-input").change(() => {
-            bootstrap.Toast.getOrCreateInstance($("#data-loaded-toast")[0]).show();
+            const li = $("#load-input")[0];
+            const file = li.files[0];
+            const reader = new FileReader();
+            reader.onload = () => {
+                const data = JSON.parse(reader.result);
+                let d = JSON.parse(localStorage.getItem("japm")) || {};
+                const username = Object.keys(data)[0];
+                if (!d.hasOwnProperty(username)) {
+                    d[username] = data[username];
+                    localStorage.setItem("japm", JSON.stringify(d));
+                    $("#data-loaded-toast").toast("show");
+                } else {
+                    console.log("Data for this user already exists.");
+                    $("#user-exists-toast").toast("show");
+                }
+            };
+            reader.readAsText(file);
         });
         $("#login-password").off("keypress").on("keypress", (e) => {
             if (e.key === "Enter") {
@@ -719,7 +699,7 @@ class JAPM {
     exportData() {
         const data = this.#user.toJSON();
         Crypt.encrypt(data, this.#user.getPasswordHash()).then(encrypted => {
-            this.#fileHandler.writeToFile(encrypted);
+            this.#fileHandler.writeToFile({[this.#user.getUsername()]: encrypted});
         });
     }
 
@@ -733,10 +713,7 @@ class JAPM {
     }
 
     loadDataLS(username, password) {
-        let data = localStorage.getItem("japm");
-        if (data == null) {
-            return;
-        }
+        let data = localStorage.getItem("japm") || "{}";
         data = JSON.parse(data);
         if (data.hasOwnProperty(username)) {
             Crypt.decryptBlob(data[username], password).then(decrypted => {

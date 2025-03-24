@@ -23,7 +23,7 @@
             </div>
             <div class="custom-file">
                 <input type="file" id="load-input" class="custom-file-input d-none"></input>
-                <button id="load-button" class="btn btn-primary w-100 mb-3 mt-2" tabindex="4">Load JSON Data Backup</button>
+                <button id="load-button" class="btn btn-primary w-100 mb-3 mt-2" tabindex="4">Load User JSON Data Backup</button>
             </div>
             <div class="flex-column d-flex">
                 <h3 class="text-center">Login</h3>
@@ -108,7 +108,19 @@
                         <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                     </div>
                     <div class="toast-body">
-                        Your data was successfully loaded from the JSON file.
+                        Your user data was successfully loaded from the JSON file.
+                    </div>
+                </div>
+            </div>
+            <div class="toast-container position-fixed translate-middle start-50 p-2 top-30">
+                <div id="user-exists-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
+                    data-bs-delay="1000">
+                    <div class="toast-header">
+                        <strong class="me-auto">User already exists. Cannot overwrite</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        User already exists. Cannot overwrite existing user data
                     </div>
                 </div>
             </div>
