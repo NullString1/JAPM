@@ -321,9 +321,9 @@ class JAPM {
             case JAPM.State.UNAUTHENTICATED:
                 window.history.pushState({}, "", "#/login"); // Change URL to /login
                 $("#login-container").removeClass("d-none");
+                $("#login-error").addClass("d-none");
                 $("#main-container").addClass("d-none");
                 if (localStorage.getItem("japm") != null) {
-                    $("#login-submit").text("Login");
                     $("#reset-japm").removeClass("d-none");
                 }
                 clearTimeout(this.#autoLogoutTimer);
@@ -440,13 +440,19 @@ class JAPM {
             $("#load-input").trigger("click");
         });
         $("#load-input").change(() => {
-            $("#login-submit").text("Login");
             bootstrap.Toast.getOrCreateInstance($("#data-loaded-toast")[0]).show();
         });
         $("#login-password").off("keypress").on("keypress", (e) => {
             if (e.key === "Enter") {
                 e.preventDefault();
                 $("#login-submit").trigger("click");
+            }
+        });
+        $("#login-username").off("keyup").on("keyup", (e) => {
+            if (JSON.parse(localStorage.getItem("japm")).hasOwnProperty($("#login-username").val())) {
+                $("#login-submit").text("Login");
+            } else {
+                $("#login-submit").text("Register");
             }
         });
         $("#reset-data-button").off("click").on("click", () => {
@@ -465,7 +471,6 @@ class JAPM {
             $("body").toggleClass("dyslexic");
         });
         if (localStorage.getItem("japm") != null) {
-            $("#login-submit").text("Login");
             $("#reset-japm").removeClass("d-none");
         }
 
@@ -721,7 +726,9 @@ class JAPM {
     saveDataLS() {
         const data = this.#user.toJSON();
         Crypt.encrypt(data, this.#user.getPasswordHash()).then(encrypted => {
-            localStorage.setItem("japm", JSON.stringify(encrypted));
+            const existingData = JSON.parse(localStorage.getItem("japm")) || {};
+            existingData[this.#user.getUsername()] = encrypted;
+            localStorage.setItem("japm", JSON.stringify(existingData));
         });
     }
 
@@ -730,19 +737,27 @@ class JAPM {
         if (data == null) {
             return;
         }
-        return Crypt.decryptBlob(JSON.parse(data), password).then(data => {
-            const user = new User(data.username, data.password_hash, null, data.credentials, data.generator_history, data.created_at);
-            this.setUser(user);
-            if (this.#user.getUsername() != username) {
-                console.log("Invalid username");
+        data = JSON.parse(data);
+        if (data.hasOwnProperty(username)) {
+            Crypt.decryptBlob(data[username], password).then(decrypted => {
+                const user = new User(decrypted.username, decrypted.password_hash, null, decrypted.credentials, decrypted.generator_history, decrypted.created_at);
+                this.setUser(user);
+                this.updateState(JAPM.State.AUTHENTICATED);
+            }).catch(() => {
+                console.error("Invalid password");
                 $("#login-error").removeClass("d-none");
-                return;
             }
+            );
+        } else {
+            this.#user = new User(username, null, password);
+            const sInterval = setInterval(() => {
+                if (this.#user.getPasswordHash() != null) {
+                    clearInterval(sInterval);
+                    this.saveDataLS();
+                }
+            }, 100);
             this.updateState(JAPM.State.AUTHENTICATED);
-        }).catch(() => {
-            console.error("Invalid password");
-            $("#login-error").removeClass("d-none");
-        });
+        }
     }
 
 }
