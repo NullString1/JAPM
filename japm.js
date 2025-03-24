@@ -19,6 +19,11 @@ class User {
         this.#generator_history = generator_history;
     }
 
+    /**
+     * Hashes the password with SHA-256 and stores the hash
+     * @param {string} password
+     * @returns {void}
+     **/
     setPassword(password) {
         const buf = new TextEncoder().encode(password);
         crypto.subtle.digest('SHA-256', buf).then(h => {
@@ -26,10 +31,19 @@ class User {
         });
     }
 
+    /**
+    * Returns the username of the user
+    * @returns {string}
+    */
     getUsername() {
         return this.#username;
     }
 
+    /**
+     * Hashes input password and compares it to the stored hash
+     * @param {string} password
+     * @returns {Promise<boolean>}
+     */
     checkPassword(password) {
         const buf = new TextEncoder().encode(password);
         return crypto.subtle.digest('SHA-256', buf).then(h => {
@@ -47,26 +61,53 @@ class User {
         });
     }
 
+    /**
+     * Returns list of credentials
+     * @returns {Credential[]}
+     */
     getCredentials() {
         return this.#credentials;
     }
 
+    /**
+     * Sets the credentials for the user
+     * @param {Credential[]} credentials
+     * @returns {void}
+     */
     setCredentials(credentials) {
         this.#credentials = credentials;
     }
 
+    /**
+     * Removes a credential from the user's list
+     * @param {Credential} credential
+     * @returns {void}
+     */
     removeCredential(credential) {
         this.#credentials = this.#credentials.filter(cred => cred !== credential);
     }
 
+    /**
+     * Adds a credential to the user's list
+     * @param {Credential} credential
+     * @returns {void}
+     */
     addCredential(credential) {
         this.#credentials.push(credential);
     }
 
+    /**
+     * Returns the creation date of the user
+     * @returns {Date}
+     */
     getCreatedAt() {
         return this.#created_at;
     }
 
+    /**
+     * Returns the user data in JSON format
+     * @returns {string}
+     */
     toJSON() {
         return JSON.stringify({
             username: this.#username,
@@ -77,18 +118,36 @@ class User {
         });
     }
 
+    /**
+     * Returns the user's password hash
+     * @returns {ArrayBuffer}
+     */
     getPasswordHash() {
         return this.#password_hash;
     }
 
+    /**
+     * Returns the user's generator history
+     * @returns {Object[]}
+     */
     getGeneratorHistory() {
         return this.#generator_history;
     }
 
+    /**
+     * Adds an item to the generator history
+     * @param {Object} item
+     * @returns {void}
+     */
     addGeneratorHistory(item) {
         this.#generator_history.push(item);
     }
 
+    /**
+     * Sets the generator history for the user
+     * @param {Object[]} history
+     * @returns {void}
+     */
     setGeneratorHistory(history) {
         this.#generator_history = history;
         this.#generator_history.forEach(item => {
@@ -116,6 +175,15 @@ class Credential {
         this.#weak = this.isWeak();
     }
 
+    /**
+     * Checks if the password is weak based on the following criteria:
+     * - Minimum length of 8 characters
+     * - At least one uppercase letter
+     * - At least one lowercase letter
+     * - At least one digit
+     * - At least one special character
+     * @returns {boolean}
+     */
     isWeak() {
         if (this.#password.length < 8) {
             return true;
@@ -135,55 +203,108 @@ class Credential {
         return false;
     }
 
+    /**
+     * Returns whether the password is weak
+     * @returns {boolean}
+     */
     getWeak() {
         return this.#weak;
     }
 
+    /**
+     * Returns the password
+     * @returns {string}
+     */
     getPassword() {
         return this.#password;
     }
 
+    /**
+     * Returns the username
+     * @returns {string}
+     */
     getUsername() {
         return this.#username;
     }
 
+    /**
+     * Sets the password
+     * @param {string} password
+     * @returns {void}
+     */
     setPassword(password) {
         this.#password = password;
         this.#last_modified_at = new Date();
         this.#weak = this.isWeak();
     }
 
+    /**
+     * Sets the username
+     * @param {string} username
+     * @returns {void}
+     */
     setUsername(username) {
         this.#username = username;
         this.#last_modified_at = new Date();
     }
 
+
+    /**
+     * Returns the created at date
+     * @returns {Date}
+     */
     getCreatedAt() {
         return this.#created_at;
     }
 
+    /**
+     * Returns the last modified at date
+     * @returns {Date}
+     */
     getLastModAt() {
         return this.#last_modified_at;
     }
 
+    /**
+     * Returns the URL
+     * @returns {string}
+     */
     getURL() {
         return this.#url;
     }
 
+    /**
+     * Sets the URL
+     * @param {string} url
+     * @returns {void}
+     */
     setURL(url) {
         this.#url = url;
         this.#last_modified_at = new Date();
     }
 
+    /**
+     * Returns the name of the credential
+     * @returns {string}
+     */
     getName() {
         return this.#name;
     }
 
+    /**
+     * Sets the name of the credential
+     * @param {string} name
+     * @returns {void}
+     */
     setName(name) {
         this.#name = name;
         this.#last_modified_at = new Date();
     }
 
+    /**
+     * Returns the Credential as JSON string
+     * @returns {string}
+     */
     toJSON() {
         return JSON.stringify({
             username: this.#username,
@@ -197,6 +318,10 @@ class Credential {
 }
 
 class FileHandler {
+    /**
+     * Writes data to a file
+     * @param {*} data 
+     */
     writeToFile(data) {
         const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
@@ -208,8 +333,14 @@ class FileHandler {
 }
 
 class Crypt {
+    /**
+     * Generates a key from the provided password hash and salt. If no salt is provided, a random one is generated.
+     * The key is derived from the password hash using PBKDF2 with SHA-256 and AES-CBC with 256-bit key length.
+     * @param {ArrayBuffer} password_hash 
+     * @param {Uint8Array|null} salt_ 
+     * @returns {Promise<{key: CryptoKey, salt: Uint8Array}>}
+     */
     static keyFromPassword(password_hash, salt_ = null) {
-        // Hash the password, then import it, then derive a key from it with PBKDF2 for AES-CBC
         return crypto.subtle.importKey("raw", password_hash, { name: "PBKDF2" }, false, ["deriveKey"]).then(key => {
             const salt = salt_ == null ? crypto.getRandomValues(new Uint8Array(16)) : salt_;
             return crypto.subtle.deriveKey(
@@ -230,6 +361,12 @@ class Crypt {
 
     }
 
+    /**
+     * Encrypts the provided data using AES-CBC with the provided password hash
+     * @param {*} data
+     * @param {*} password_hash
+     * @returns {Promise<{data: string, iv: string, salt: string}>}
+     */
     static encrypt(data, password_hash) {
         console.log("Password hash: " + Array.from(new Uint8Array(password_hash)).map(b => b.toString(16)).join(""));
         const algo = { name: "AES-CBC", iv: crypto.getRandomValues(new Uint8Array(16)) };
@@ -240,6 +377,13 @@ class Crypt {
         });
     }
 
+    /**
+     * Decrypts the provided data using AES-CBC with the provided password hash
+     * @param {*} data
+     * @param {*} password_hash
+     * @returns {Promise<string>}
+     * @throws {Error} Incorrect password. Decryption failed.
+     */
     static decrypt(data, password_hash) {
         const algo = { name: "AES-CBC", iv: data.iv };
         return Crypt.keyFromPassword(password_hash, data.salt).then(key => {
@@ -247,10 +391,16 @@ class Crypt {
                 return new TextDecoder().decode(decrypted);
             });
         }).catch(e => {
-            console.error("Incorrect password. Decryption failed.");
+            throw new Error("Incorrect password. Decryption failed.");
         });
     }
 
+    /**
+     * Decrypts the provided data blob using the provided password
+     * @param {*} data
+     * @param {*} password
+     * @returns {Promise<Object>}
+     */
     static decryptBlob(data, password) {
         data.data = Crypt.toUint8Array(data.data);
         data.iv = Crypt.toUint8Array(data.iv);
@@ -270,16 +420,37 @@ class Crypt {
         });
     }
 
+    /**
+     * Converts a hex string to a Uint8Array
+     * @param {string} hex
+     * @returns {Uint8Array}
+     * @throws {Error} Invalid hex string
+     */
     static toUint8Array(hex) {
+        if (!/^[0-9a-fA-F]*$/.test(hex)) {
+            throw new Error("Invalid hex string provided");
+        }
         return Uint8Array.from(hex.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)));
     }
 
+    /**
+     * Converts a Uint8Array to a hex string
+     * @param {Uint8Array} uint8
+     * @returns {string}
+     */
     static toHex(uint8) {
         return (new Uint8Array(uint8)).reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
     }
 }
 
 class PasswordGenerator {
+    /**
+     * Generates a random password with the provided length and charset, and adds it to the user's generator history
+     * @param {number} length
+     * @param {string} charset
+     * @param {User} user
+     * @returns {string}
+     */
     static generate(length, charset, user) {
         let password = "";
         const randValues = crypto.getRandomValues(new Uint32Array(length));
@@ -299,6 +470,11 @@ class JAPM {
     state;
     #autoLogoutTimer;
 
+    /**
+     * States of the application (unauthenticated, authenticated)
+     * @typedef {Object} State
+     * @enum {string}
+     */
     static State = {
         UNAUTHENTICATED: "unauthenticated",
         AUTHENTICATED: "authenticated"
@@ -311,10 +487,18 @@ class JAPM {
         this.updateState(JAPM.State.UNAUTHENTICATED);
     }
 
+    /**
+     * Sets the logged in / current user
+     * @param {User} user
+     * @returns {void}
+     */
     setUser(user) {
         this.#user = user;
     }
 
+    /**
+     * Updates the state of the application
+     */
     updateState(state) {
         this.state = state;
         switch (state) {
@@ -339,10 +523,18 @@ class JAPM {
 
     };
 
+    /**
+     * Logs in the user with the provided username and password
+     * @param {string} username 
+     * @param {string} password 
+     */
     login(username, password) {
         this.loadDataLS(username, password);
     }
 
+    /**
+     * Logs out the user and resets the state after 5 minutes of login time
+     */
     autoLogout() {
         setTimeout(() => {
             this.#user = undefined;
@@ -352,6 +544,10 @@ class JAPM {
         }, 5 * 60 * 1000);
     }
 
+
+    /**
+     * Sets up the login page functionality and event handlers
+     */
     setupLogin() {
         $("#login-submit").off("click").on("click", () => {
             const pass = $("#login-password").val();
@@ -456,6 +652,9 @@ class JAPM {
 
     }
 
+    /**
+     * Sets up the main view functionality and event handlers
+     */
     setupMainView() {
         $("#add-cred-submit").off("click").on("click", () => {
             const name = $("#name").val();
@@ -575,6 +774,9 @@ class JAPM {
         $('[data-bs-toggle="tooltip"]').tooltip();
     }
 
+    /**
+     * Builds the credentials table from logged in user's credentials
+     */
     buildCredsTable() {
         if (this.#user == undefined) {
             this.updateState(JAPM.State.UNAUTHENTICATED);
@@ -690,19 +892,35 @@ class JAPM {
         });
     }
 
+    /**
+     * Adds a credential to the user's list
+     * @param {string} name
+     * @param {string} url
+     * @param {string} username
+     * @param {string} password
+     * @returns {void}
+     */
     addCred(name, url, username, password) {
         this.#user.addCredential(new Credential(username, password, url, name));
         this.buildCredsTable();
         this.saveDataLS();
     }
 
+    /**
+     * Exports user data to a file
+     * @returns {void}
+     */
     exportData() {
         const data = this.#user.toJSON();
         Crypt.encrypt(data, this.#user.getPasswordHash()).then(encrypted => {
-            this.#fileHandler.writeToFile({[this.#user.getUsername()]: encrypted});
+            this.#fileHandler.writeToFile({ [this.#user.getUsername()]: encrypted });
         });
     }
 
+    /**
+     * Saves user data to local storage
+     * @returns {void}
+     */
     saveDataLS() {
         const data = this.#user.toJSON();
         Crypt.encrypt(data, this.#user.getPasswordHash()).then(encrypted => {
@@ -712,6 +930,12 @@ class JAPM {
         });
     }
 
+    /**
+     * Loads user data from local storage and decrypts it
+     * @param {string} username
+     * @param {string} password
+     * @returns {void}
+     */
     loadDataLS(username, password) {
         let data = localStorage.getItem("japm") || "{}";
         data = JSON.parse(data);
