@@ -1,6 +1,7 @@
 # <div align="center">JAPM</div>
 #### <div align="center">(Just Another Password Manager)</div>
-![JAPM Login Page](login_page.png)
+<div align="center"><img src="login_page.png"></img></div>
+
 ### About the project
 JAPM (Just Another Password Manager) is a password manager written in HTML, CSS and JS using the Web Crypto API.
 
